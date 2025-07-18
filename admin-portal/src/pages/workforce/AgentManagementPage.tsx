@@ -153,8 +153,8 @@ const AgentManagementPage: React.FC = () => {
         adminAPI.getWorkforceAnalytics({ type: 'agent-stats' })
       ]);
 
-      setAgents(agentsResponse.data?.agents || []);
-      setStats(statsResponse.data?.overview || {
+      setAgents((agentsResponse.data as any)?.agents || []);
+      setStats((statsResponse.data as any)?.overview || {
         totalAgents: 0,
         activeAgents: 0,
         onDutyAgents: 0,

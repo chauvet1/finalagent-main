@@ -196,8 +196,8 @@ const AttendancePage: React.FC = () => {
 
         // Use the enhanced API service (token automatically injected)
         const [employeesResponse, attendanceResponse] = await Promise.all([
-          adminAPI.getEmployees?.() || adminAPI.getUsers(),
-          adminAPI.getAttendanceRecords?.() || adminAPI.getAttendance()
+          (adminAPI as any).getEmployees?.() || adminAPI.getUsers(),
+          adminAPI.getAttendanceRecords?.() || (adminAPI as any).getAttendance()
         ]);
         
         const employeesData = employeesResponse.data.data || [];

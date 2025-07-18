@@ -1,0 +1,39 @@
+{
+  "name": "bahinlink-client-portal",
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_API_URL": "https://your-backend-url.vercel.app/api",
+    "REACT_APP_WS_URL": "wss://your-backend-url.vercel.app",
+    "REACT_APP_ADMIN_PORTAL_URL": "https://bahinlink-admin.vercel.app",
+    "REACT_APP_CLIENT_PORTAL_URL": "https://bahinlink-client.vercel.app",
+    "REACT_APP_CLERK_PUBLISHABLE_KEY": "pk_test_YWxlcnQtY2F0ZmlzaC00Ny5jbGVyay5hY2NvdW50cy5kZXYk",
+    "REACT_APP_NAME": "BahinLink",
+    "REACT_APP_VERSION": "1.0.0"
+  },
+  "build": {
+    "env": {
+      "GENERATE_SOURCEMAP": "false"
+    }
+  }
+}

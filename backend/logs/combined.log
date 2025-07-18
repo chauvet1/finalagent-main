@@ -3333,3 +3333,20 @@
 {"developmentMode":true,"email":"concurrent-dev-2-1752767529128@example.com","environment":"development","level":"info","message":"Development authentication successful","role":"ADMIN","service":"bahinlink-backend","timestamp":"2025-07-17T15:52:12.155Z","userId":"cmd7kj730004u11w88s1wdzdk"}
 {"authenticationMethod":"development","email":"concurrent-dev-2-1752767529128@example.com","level":"info","message":"Authentication successful","role":"ADMIN","service":"bahinlink-backend","timestamp":"2025-07-17T15:52:12.156Z","tokenType":"development","userId":"cmd7kj730004u11w88s1wdzdk"}
 {"authenticationMethod":"development","email":"concurrent-dev-2-1752767529128@example.com","endpoint":"/concurrent-dev-test","ip":"::ffff:127.0.0.1","level":"info","message":"User authenticated successfully","method":"GET","role":"ADMIN","service":"bahinlink-backend","sessionId":"development_cmd7kj73_1752767532156_d1yw9nj5w","timestamp":"2025-07-17T15:52:12.156Z","tokenType":"development","userId":"cmd7kj730004u11w88s1wdzdk"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T15:48:56.828Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T15:48:56.832Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:17:57.841Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:17:57.843Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:19:11.496Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:19:11.498Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:22:59.629Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:28:46.827Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:28:46.831Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:29:41.406Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:29:41.410Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:31:20.173Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:31:20.176Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:42:37.491Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:42:37.495Z"}
+{"level":"warn","message":"Redis not connected, using mock for operation: duplicate","service":"bahinlink-backend","timestamp":"2025-07-18T16:44:52.538Z"}
+{"level":"info","message":"WebSocket service initialized","service":"bahinlink-backend","timestamp":"2025-07-18T16:44:52.542Z"}

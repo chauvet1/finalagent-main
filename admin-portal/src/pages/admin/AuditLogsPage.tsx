@@ -147,7 +147,7 @@ const AuditLogsPage: React.FC = () => {
       ]);
 
       setAuditLogs(logsResponse.data.data || []);
-      setStats(statsResponse.data.stats || {
+      setStats((statsResponse.data as any)?.stats || {
         totalLogs: 0,
         todayLogs: 0,
         uniqueUsers: 0,

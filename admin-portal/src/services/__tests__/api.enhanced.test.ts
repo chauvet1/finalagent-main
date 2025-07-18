@@ -205,13 +205,13 @@ describe('Enhanced API Service Token Handling', () => {
   describe('Development Mode Behavior', () => {
     it('should handle development mode correctly', async () => {
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
+      (process.env as any).NODE_ENV = 'development';
       
       // Should not throw in development mode
       await expect(getCurrentTokenInfo()).resolves.toBeDefined();
       await expect(isAuthenticationAvailable()).resolves.toBeDefined();
       
-      process.env.NODE_ENV = originalEnv;
+      (process.env as any).NODE_ENV = originalEnv;
     });
   });
 

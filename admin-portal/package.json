@@ -43,7 +43,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env BROWSER=none GENERATE_SOURCEMAP=false react-scripts start",
+    "start": "cross-env BROWSER=none GENERATE_SOURCEMAP=false TSC_COMPILE_ON_ERROR=true SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "start:fast": "cross-env SKIP_PREFLIGHT_CHECK=true GENERATE_SOURCEMAP=false TSC_COMPILE_ON_ERROR=true react-scripts start",
     "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",

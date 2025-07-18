@@ -5,7 +5,6 @@ const redisUrl = process.env['REDIS_URL'] || 'redis://localhost:6379';
 
 // Create Redis client with fallback handling
 const redisClient = new Redis(redisUrl, {
-  retryDelayOnFailover: 100,
   maxRetriesPerRequest: 3,
   lazyConnect: true,
   enableOfflineQueue: false,

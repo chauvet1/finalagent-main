@@ -129,7 +129,7 @@ const ClientPortalPage: React.FC = () => {
         console.debug(`Loading portal access data with ${tokenInfo.type} token`);
         
         // Use the enhanced API service (token automatically injected)
-        const response = await adminAPI.getClientPortalAccess?.() || 
+        const response = await (adminAPI as any).getClientPortalAccess?.() ||
                          await adminAPI.getClients();
         
         setPortalAccess(response.data.data || []);

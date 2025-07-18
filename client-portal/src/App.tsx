@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Box } from '@mui/material';
+import { CssBaseline, Box, CircularProgress } from '@mui/material';
 import { Provider } from 'react-redux';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -29,6 +29,11 @@ import ProfilePage from './pages/ProfilePage';
 import LiveMonitoringPage from './pages/monitoring/LiveMonitoringPage';
 import MessagesPage from './pages/MessagesPage';
 import NotificationsPage from './pages/NotificationsPage';
+
+// Landing Pages
+import HomePage from './pages/landing/HomePage';
+import ClientLoginPage from './pages/landing/ClientLoginPage';
+import ClientSignupPage from './pages/landing/ClientSignupPage';
 
 const theme = createTheme({
   palette: {
@@ -147,12 +152,35 @@ const AuthenticatedApp: React.FC = () => {
 };
 
 const AppContent: React.FC = () => {
-  const { isSignedIn } = useClerkAuth();
+  const { isSignedIn, isLoaded } = useClerkAuth();
 
-  if (!isSignedIn) {
-    return <RedirectToSignIn />;
+  // Show loading while Clerk is initializing
+  if (!isLoaded) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
+  // Handle unauthenticated routes (landing pages)
+  if (!isSignedIn) {
+    return (
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/client/login" element={<ClientLoginPage />} />
+        <Route path="/client/signup" element={<ClientSignupPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
+  }
+
+  // Handle authenticated routes (main app)
   return <AuthenticatedApp />;
 };
 

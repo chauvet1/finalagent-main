@@ -26,7 +26,7 @@ describe('End-to-End Authentication Flow Tests - Admin Portal', () => {
   describe('Development Mode Authentication Flow', () => {
     beforeAll(() => {
       // Set development mode
-      process.env.NODE_ENV = 'development';
+      (process.env as any).NODE_ENV = 'development';
     });
 
     it('should authenticate and make API calls in development mode', async () => {
@@ -165,7 +165,7 @@ describe('End-to-End Authentication Flow Tests - Admin Portal', () => {
 
       // Set production mode to test fallback
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      (process.env as any).NODE_ENV = 'production';
 
       try {
         const authAvailable = await isAuthenticationAvailable();
@@ -175,7 +175,7 @@ describe('End-to-End Authentication Flow Tests - Admin Portal', () => {
         const tokenInfo = await getCurrentTokenInfo();
         expect(tokenInfo.isValid).toBe(false);
       } finally {
-        process.env.NODE_ENV = originalEnv;
+        (process.env as any).NODE_ENV = originalEnv;
       }
     });
 
@@ -185,7 +185,7 @@ describe('End-to-End Authentication Flow Tests - Admin Portal', () => {
       expect(typeof refreshResult1).toBe('boolean');
 
       // Test token refresh with development token
-      process.env.NODE_ENV = 'development';
+      (process.env as any).NODE_ENV = 'development';
       const refreshResult2 = await refreshAuthToken();
       expect(typeof refreshResult2).toBe('boolean');
     });

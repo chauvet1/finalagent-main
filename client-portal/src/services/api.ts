@@ -65,16 +65,19 @@ export const clientPortalAPI = {
     }),
   
   // Service requests
-  getServiceRequests: (params?: any) => 
+  getServiceRequests: (params?: any) =>
     apiClient.get('/client-portal/requests', { params }),
-  
-  createServiceRequest: (data: any) => 
+
+  getServiceRequestsStats: () =>
+    apiClient.get('/client-portal/requests/stats'),
+
+  createServiceRequest: (data: any) =>
     apiClient.post('/client-portal/requests', data),
-  
-  getServiceRequest: (requestId: string) => 
+
+  getServiceRequest: (requestId: string) =>
     apiClient.get(`/client-portal/requests/${requestId}`),
-  
-  updateServiceRequest: (requestId: string, data: any) => 
+
+  updateServiceRequest: (requestId: string, data: any) =>
     apiClient.put(`/client-portal/requests/${requestId}`, data),
   
   // Sites
@@ -114,19 +117,25 @@ export const clientPortalAPI = {
     apiClient.put('/client-portal/notifications/mark-all-read'),
   
   // Billing
-  getBilling: (params?: any) => 
+  getBilling: (params?: any) =>
     apiClient.get('/client-portal/billing', { params }),
-  
-  getInvoices: (params?: any) => 
+
+  getBillingStats: () =>
+    apiClient.get('/client-portal/billing/stats'),
+
+  getInvoices: (params?: any) =>
     apiClient.get('/client-portal/billing/invoices', { params }),
-  
-  getInvoice: (invoiceId: string) => 
+
+  getInvoice: (invoiceId: string) =>
     apiClient.get(`/client-portal/billing/invoices/${invoiceId}`),
 
-  downloadInvoice: (invoiceId: string) => 
+  downloadInvoice: (invoiceId: string) =>
     apiClient.get(`/client-portal/billing/invoices/${invoiceId}/download`, {
       responseType: 'blob',
     }),
+
+  getPayments: (params?: any) =>
+    apiClient.get('/client-portal/billing/payments', { params }),
 
   // Payment Methods
   getPaymentMethods: () => 
@@ -189,11 +198,21 @@ export const clientPortalAPI = {
     apiClient.get('/client-portal/schedule-requests', { params }),
   
   // Feedback
-  submitFeedback: (data: any) => 
+  submitFeedback: (data: any) =>
     apiClient.post('/client-portal/feedback', data),
-  
-  getFeedback: (params?: any) => 
+
+  getFeedback: (params?: any) =>
     apiClient.get('/client-portal/feedback', { params }),
+
+  // Summary and analytics
+  getSummaryData: (params?: any) =>
+    apiClient.get('/client-portal/analytics/summary', { params }),
+
+  exportSummaryReport: (params?: any) =>
+    apiClient.get('/client-portal/analytics/summary/export', {
+      params,
+      responseType: 'blob'
+    }),
 };
 
 // Reports API
@@ -268,6 +287,21 @@ export const getAuthToken = () => {
 export const isAuthenticated = () => {
   return !!getAuthToken();
 };
+
+// Additional utility functions for compatibility
+export const isAuthenticationAvailable = () => {
+  return !!getAuthToken();
+};
+
+export const getCurrentTokenInfo = () => {
+  const token = getAuthToken();
+  return token ? { token, type: 'bearer' } : null;
+};
+
+// Alias for clientPortalAPI for backward compatibility
+export const clientAPI = clientPortalAPI;
+
+
 
 // Initialize auth token on app start
 const token = getAuthToken();

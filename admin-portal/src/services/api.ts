@@ -624,19 +624,7 @@ export const adminAPI = {
   getSitesWithSecurity: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
     apiClient.get('/admin/sites/security', { params }),
 
-  // Agent Management
-  getAgents: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.get('/admin/agents', { params }),
-
-  createAgent: (data: any): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.post('/admin/agents', data),
-
-  deleteAgent: (agentId: string): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.delete(`/admin/agents/${agentId}`),
-
-  // Workforce Analytics
-  getWorkforceAnalytics: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.get('/admin/workforce/analytics', { params }),
+  // Note: Agent Management methods already defined above (lines 566-580)
 
   // Attendance Management
   getAttendanceRecords: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
@@ -648,15 +636,7 @@ export const adminAPI = {
   updateAttendanceRecord: (recordId: string, data: any): Promise<AxiosResponse<ApiResponse<any>>> =>
     apiClient.put(`/admin/attendance/records/${recordId}`, data),
 
-  // Training Management
-  getTrainingPrograms: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.get('/admin/training/programs', { params }),
-
-  getTrainingRecords: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.get('/admin/training/records', { params }),
-
-  getTrainingCertifications: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.get('/admin/training/certifications', { params }),
+  // Note: Training Management methods already defined above (lines 591-592)
 
   // Analytics
   getAnalytics: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
@@ -739,14 +719,7 @@ export const adminAPI = {
   getSystemStatus: (): Promise<AxiosResponse<ApiResponse<any>>> =>
     apiClient.get('/admin/system/status'),
   
-  getAuditLogs: (params?: any): Promise<AxiosResponse<ApiResponse<any[]>>> =>
-    apiClient.get('/admin/audit-logs', { params }),
-
-  getAuditLogById: (id: string): Promise<AxiosResponse<ApiResponse<any>>> =>
-    apiClient.get(`/admin/audit-logs/${id}`),
-
-  exportAuditLogs: (params: any): Promise<AxiosResponse<any>> =>
-    apiClient.post('/admin/audit-logs/export', params, { responseType: 'blob' }),
+  // Note: Audit logs methods already defined above (lines 427-431 and 595-599)
 
   // Scheduling Endpoints (schedule data, optimization)
   getScheduleData: (params?: any): Promise<AxiosResponse<ApiResponse<any>>> =>

@@ -8,7 +8,7 @@ import { getUserRole, isAdmin, isClient } from './roleUtils';
 // Portal URLs
 export const PORTAL_URLS = {
   CLIENT: 'http://localhost:3000',
-  ADMIN: 'http://localhost:3001',
+  ADMIN: 'http://localhost:3002',
   API: 'http://localhost:8000'
 };
 

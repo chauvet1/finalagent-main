@@ -278,9 +278,9 @@ const ContractsPage: React.FC = () => {
         await adminAPI.updateContract(editingContract.id, contractData);
         
         // Update the contract in the local state
-        setContracts(prev => prev.map(contract => 
-          contract.id === editingContract.id 
-            ? { ...contract, ...contractData, startDate: formData.startDate, endDate: formData.endDate }
+        setContracts(prev => prev.map(contract =>
+          contract.id === editingContract.id
+            ? { ...contract, ...contractData, startDate: formData.startDate, endDate: formData.endDate } as unknown as Contract
             : contract
         ));
       } else {

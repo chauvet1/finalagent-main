@@ -174,9 +174,9 @@ const BillingInvoicingPage: React.FC = () => {
         adminAPI.getBillingData({ type: 'stats' })
       ]);
 
-      setInvoices(invoicesResponse.data?.invoices || []);
-      setPayments(paymentsResponse.data?.payments || []);
-      setStats(statsResponse.data?.stats || {
+      setInvoices((invoicesResponse.data as any)?.invoices || []);
+      setPayments((paymentsResponse.data as any)?.payments || []);
+      setStats((statsResponse.data as any)?.stats || {
         totalInvoices: 0,
         totalRevenue: 0,
         outstandingAmount: 0,

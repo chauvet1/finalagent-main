@@ -167,8 +167,8 @@ const ClientOverviewPage: React.FC = () => {
         adminAPI.getClientStats()
       ]);
 
-      setClients(clientsResponse.data || []);
-      setStats(statsResponse.data || {
+      setClients((clientsResponse.data as any) || []);
+      setStats((statsResponse.data as any) || {
         totalClients: 0,
         activeClients: 0,
         inactiveClients: 0,

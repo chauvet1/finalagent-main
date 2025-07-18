@@ -35,6 +35,8 @@ model User {
   createdTrainings Training[]
   enrolledTrainings TrainingEnrollment[]
   verifiedCertifications AgentCertification[]
+  clientAssociation Client? @relation("ClientUsers", fields: [clientId], references: [id])
+  clientId         String?
 
   @@map("users")
 }
@@ -44,8 +46,10 @@ model ClientProfile {
   userId         String          @unique
   companyName    String?
   contactPerson  String?
+  contactEmail   String?
+  contactPhone   String?
   phone          String?
-  address        String?
+  address        Json?
   city           String?
   country        String?
   industry       String?
@@ -529,6 +533,7 @@ model ClientRequest {
   responseNotes    String?
   actionTaken      String?
   completedAt      DateTime?
+  acknowledgedAt   DateTime?
   estimatedCost    Decimal?
   actualCost       Decimal?
   createdAt        DateTime        @default(now())
@@ -683,6 +688,7 @@ enum ReportStatus {
   REVIEWED
   APPROVED
   REJECTED
+  ARCHIVED
 }
 
 enum NotificationType {
@@ -991,6 +997,7 @@ model Contract {
   client        Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
   slaMetrics    SLAMetric[]
   documents     ContractDocument[]
+  invoices      Invoice[]
 
   @@map("contracts")
 }
@@ -1032,12 +1039,16 @@ model Client {
   id           String     @id @default(cuid())
   name         String
   contactEmail String     @map("contact_email")
+  contactPhone String?    @map("contact_phone")
   phone        String?
-  address      String?
+  address      Json?
   status       String     @default("active")
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
   contracts    Contract[]
+  invoices     Invoice[]
+  payments     Payment[]
+  users        User[]     @relation("ClientUsers")
 
   @@map("clients")
 }
@@ -1070,4 +1081,72 @@ enum DocumentType {
   SLA
   INVOICE
   REPORT
+}
+
+// Invoice and Payment models
+model Invoice {
+  id          String        @id @default(cuid())
+  contractId    String        @map("contract_id")
+  clientId      String        @map("client_id")
+  number        String        @unique
+  invoiceNumber String        @unique @map("invoice_number")
+  amount      Decimal       @db.Decimal(10, 2)
+  currency    String        @default("USD")
+  status      InvoiceStatus @default(DRAFT)
+  issueDate   DateTime      @default(now()) @map("issue_date")
+  dueDate     DateTime      @map("due_date")
+  paidDate    DateTime?     @map("paid_date")
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  contract    Contract      @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  payments    Payment[]
+
+  @@map("invoices")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  invoiceId     String        @map("invoice_id")
+  clientId      String        @map("client_id")
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  method        PaymentMethod @default(BANK_TRANSFER)
+  status        PaymentStatus @default(PENDING)
+  transactionId String?       @map("transaction_id")
+  paidAt        DateTime?     @map("paid_at")
+  notes         String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// Invoice and Payment enums
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CREDIT_CARD
+  CASH
+  CHECK
+  ONLINE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }

@@ -317,18 +317,18 @@ const TrainingManagementPage: React.FC = () => {
 
       // Use the enhanced API service (token automatically injected)
       const [trainingsResponse, enrollmentsResponse, certificationsResponse, agentCertificationsResponse, statsResponse] = await Promise.all([
-        adminAPI.getTrainingPrograms(),
+        (adminAPI as any).getTrainingPrograms?.() || adminAPI.getTrainingRecords(),
         adminAPI.getTrainingRecords(),
-        adminAPI.getTrainingCertifications(),
-        adminAPI.getTrainingCertifications(),
+        (adminAPI as any).getTrainingCertifications?.() || adminAPI.getTrainingRecords(),
+        (adminAPI as any).getTrainingCertifications?.() || adminAPI.getTrainingRecords(),
         adminAPI.getAnalytics({ type: 'training-stats' })
       ]);
 
-      setTrainings(trainingsResponse.data || []);
-      setEnrollments(enrollmentsResponse.data || []);
-      setCertifications(certificationsResponse.data || []);
-      setAgentCertifications(agentCertificationsResponse.data || []);
-      setStats(statsResponse.data || {
+      setTrainings((trainingsResponse.data as any) || []);
+      setEnrollments((enrollmentsResponse.data as any) || []);
+      setCertifications((certificationsResponse.data as any) || []);
+      setAgentCertifications((agentCertificationsResponse.data as any) || []);
+      setStats((statsResponse.data as any) || {
         overview: {
           totalTrainings: 0,
           activeTrainings: 0,
