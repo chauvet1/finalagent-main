@@ -21,6 +21,16 @@ export const ClerkProvider: React.FC<ClerkProviderProps> = ({ children }) => {
   return (
     <BaseClerkProvider
       publishableKey={ENV.clerk.publishableKey}
+      routerPush={(to: string) => {
+        // Ensure all Clerk navigation respects the /admin basename
+        const adminPath = to.startsWith('/admin') ? to : `/admin${to}`;
+        window.history.pushState({}, '', adminPath);
+      }}
+      routerReplace={(to: string) => {
+        // Ensure all Clerk navigation respects the /admin basename
+        const adminPath = to.startsWith('/admin') ? to : `/admin${to}`;
+        window.history.replaceState({}, '', adminPath);
+      }}
     >
       {children}
     </BaseClerkProvider>

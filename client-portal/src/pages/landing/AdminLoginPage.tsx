@@ -76,7 +76,9 @@ const AdminLoginPage: React.FC = () => {
   // Manual admin portal access function
   const handleManualAdminAccess = () => {
     console.log('🔧 Manual admin portal access triggered');
-    window.open('http://localhost:3001', '_blank');
+    const adminUrl = `${window.location.origin}/admin/sign-in`;
+    console.log('🚀 Redirecting to admin portal:', adminUrl);
+    window.location.href = adminUrl;
   };
 
   if (!isLoaded) {

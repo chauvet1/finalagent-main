@@ -137,7 +137,20 @@ const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children
  * Uses useAuth hook for authentication state management
  */
 const App: React.FC = () => {
-  const { isLoaded, isAuthenticated } = useAuth();
+  const { isLoaded, isAuthenticated, user } = useAuth();
+
+  // Debug logging for admin portal routing
+  React.useEffect(() => {
+    console.group('🔧 Admin Portal Debug Info');
+    console.log('Current URL:', window.location.href);
+    console.log('Pathname:', window.location.pathname);
+    console.log('Is Loaded:', isLoaded);
+    console.log('Is Authenticated:', isAuthenticated);
+    console.log('User:', user);
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Clerk Key:', process.env.REACT_APP_CLERK_PUBLISHABLE_KEY ? 'Set' : 'Missing');
+    console.groupEnd();
+  }, [isLoaded, isAuthenticated, user]);
 
   // Show loading spinner while Clerk is initializing
   if (!isLoaded) {
