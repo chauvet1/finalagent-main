@@ -217,8 +217,14 @@ const ReportsPage: React.FC = () => {
     }
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
+  const formatTimestamp = (timestamp: string | undefined | null) => {
+    if (!timestamp) return 'N/A';
+    try {
+      const date = new Date(timestamp);
+      return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   const formatFileSize = (bytes: number) => {

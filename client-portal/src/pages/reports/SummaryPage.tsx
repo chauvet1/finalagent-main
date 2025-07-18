@@ -313,7 +313,7 @@ return (
                 <Typography variant="h6">Total Incidents</Typography>
               </Box>
               <Typography variant="h3" color="error.main">
-                {summary.overview.totalIncidents.toLocaleString()}
+                {(summary.overview.totalIncidents || 0).toLocaleString()}
               </Typography>
               {summary.periodComparison && (
                 <Typography variant="body2" color="text.secondary">
@@ -335,7 +335,7 @@ return (
                 <Typography variant="h6">Service Requests</Typography>
               </Box>
               <Typography variant="h3" color="info.main">
-                {summary.overview.totalServiceRequests.toLocaleString()}
+                {(summary.overview.totalServiceRequests || 0).toLocaleString()}
               </Typography>
               {summary.periodComparison && (
                 <Typography variant="body2" color="text.secondary">

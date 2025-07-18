@@ -29,7 +29,7 @@ const RecentActivityCard: React.FC<RecentActivityCardProps> = ({ activities }) =
                 <>
                   <Typography variant="body2">{activity.description}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {new Date(activity.timestamp).toLocaleString()}
+                    {activity.timestamp ? new Date(activity.timestamp).toLocaleString() : 'N/A'}
                   </Typography>
                 </>
               }

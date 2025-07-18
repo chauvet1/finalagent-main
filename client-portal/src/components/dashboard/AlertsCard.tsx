@@ -32,7 +32,7 @@ const AlertsCard: React.FC<AlertsCardProps> = ({ alerts }) => (
                 <>
                   <Typography variant="body2">{alert.message}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {new Date(alert.timestamp).toLocaleString()} | Priority: {alert.priority}
+                    {alert.timestamp ? new Date(alert.timestamp).toLocaleString() : 'N/A'} | Priority: {alert.priority || 'N/A'}
                   </Typography>
                 </>
               }

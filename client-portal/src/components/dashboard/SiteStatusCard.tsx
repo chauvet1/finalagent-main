@@ -40,7 +40,7 @@ const SiteStatusCard: React.FC<SiteStatusCardProps> = ({ sites }) => (
             <Typography>{site.name}</Typography>
             <Chip label={site.status} color={getStatusColor(site.status)} size="small" />
             <Typography variant="caption" color="text.secondary">
-              Agents: {site.agentsOnSite} | Updated: {new Date(site.lastUpdate).toLocaleTimeString()}
+              Agents: {site.agentsOnSite || 0} | Updated: {site.lastUpdate ? new Date(site.lastUpdate).toLocaleTimeString() : 'N/A'}
             </Typography>
           </Box>
         ))}
