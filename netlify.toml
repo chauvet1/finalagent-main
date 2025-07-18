@@ -1,0 +1,26 @@
+[build]
+  command = "echo 'Use Vercel for build. See README.'"
+  publish = "admin-portal/build"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/backend/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/client/*"
+  to = "/client-portal/build/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/static/*"
+  to = "/admin-portal/build/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/admin-portal/build/index.html"
+  status = 200
+
+[functions]
+  directory = "backend"

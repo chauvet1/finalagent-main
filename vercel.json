@@ -1,0 +1,56 @@
+{
+  "version": 2,
+  "name": "bahinlink-unified-system",
+  "builds": [
+    {
+      "src": "client-portal/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build",
+        "buildCommand": "npm install && npm run build"
+      }
+    },
+    {
+      "src": "admin-portal/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build",
+        "buildCommand": "npm install && npm run build"
+      }
+    },
+    {
+      "src": "backend/dist/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "backend/src/**",
+          "backend/prisma/**",
+          "backend/dist/**"
+        ]
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/backend/dist/server.js"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/admin-portal/index.html"
+    },
+    {
+      "source": "/admin-static/(.*)",
+      "destination": "/admin-portal/static/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/client-portal/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_API_URL": "https://bahinlink.vercel.app/api",
+    "REACT_APP_ADMIN_PORTAL_URL": "https://bahinlink.vercel.app/admin",
+    "REACT_APP_CLIENT_PORTAL_URL": "https://bahinlink.vercel.app"
+  }
+}

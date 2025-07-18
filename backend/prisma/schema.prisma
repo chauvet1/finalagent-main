@@ -1,0 +1,1073 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String                     @id @default(cuid())
+  clerkId          String                     @unique @map("clerk_id")
+  email            String                     @unique
+  firstName        String?                    @map("first_name")
+  lastName         String?                    @map("last_name")
+  role             UserRole                   @default(CLIENT)
+  status           UserStatus                 @default(ACTIVE)
+  createdAt        DateTime                   @default(now()) @map("created_at")
+  updatedAt        DateTime                   @updatedAt @map("updated_at")
+  phone            String?
+  username         String?                    @unique
+  adminProfile     AdminProfile?
+  agentProfile     AgentProfile?
+  auditLogs        AuditLog[]
+  clientProfile    ClientProfile?
+  assignedRequests ClientRequest[]
+  groupMemberships CommunicationGroupMember[]
+  createdGroups    CommunicationGroup[]
+  sentMessages     Communication[]
+  receivedMessages MessageRecipient[]
+  notifications    Notification[]
+  reviewsGiven     PerformanceReview[]        @relation("ReviewerReviews")
+  sessions         Session[]
+  assessmentsGiven SkillAssessment[]          @relation("AssessorAssessments")
+  createdTrainings Training[]
+  enrolledTrainings TrainingEnrollment[]
+  verifiedCertifications AgentCertification[]
+
+  @@map("users")
+}
+
+model ClientProfile {
+  id             String          @id @default(cuid())
+  userId         String          @unique
+  companyName    String?
+  contactPerson  String?
+  phone          String?
+  address        String?
+  city           String?
+  country        String?
+  industry       String?
+  companySize    String?
+  serviceLevel   ServiceLevel    @default(STANDARD)
+  contractStart  DateTime?
+  contractEnd    DateTime?
+  monthlyValue   Decimal?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  billingAddress String?
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientRequests ClientRequest[]
+  incidents      Incident[]
+  reports        Report[]
+  sites          Site[]
+
+  @@map("client_profiles")
+}
+
+model AdminProfile {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  department  String?
+  position    String?
+  permissions String[]
+  accessLevel AccessLevel @default(STANDARD)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_profiles")
+}
+
+model AgentProfile {
+  id                  String               @id @default(cuid())
+  userId              String               @unique
+  employeeId          String               @unique
+  phone               String?
+  emergencyContact    String?
+  hireDate            DateTime
+  skills              String[]
+  certifications      String[]
+  currentSiteId       String?
+  rating              Float?
+  completedShifts     Int                  @default(0)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  currentSite         Site?                @relation(fields: [currentSiteId], references: [id])
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendance          Attendance[]
+  geofenceValidations GeofenceValidation[]
+  geofenceViolations  GeofenceViolation[]
+  incidents           Incident[]
+  performanceReviews  PerformanceReview[]
+  qrCodeScans         QRCodeScan[]
+  reports             Report[]
+  shifts              Shift[]
+  skillAssessments    SkillAssessment[]
+  trackingLogs        TrackingLog[]
+  trainingEnrollments TrainingEnrollment[]
+  trainingCompletions TrainingCompletion[]
+  agentCertifications AgentCertification[]
+
+  @@map("agent_profiles")
+}
+
+model Site {
+  id                String          @id @default(cuid())
+  name              String
+  address           String
+  city              String
+  country           String
+  coordinates       Json?
+  clientId          String
+  type              SiteType
+  status            SiteStatus      @default(ACTIVE)
+  securityLevel     SecurityLevel   @default(MEDIUM)
+  maxAgents         Int             @default(1)
+  shiftPattern      String?
+  equipment         String[]
+  emergencyContacts Json?
+  contractStart     DateTime?
+  contractEnd       DateTime?
+  monthlyValue      Decimal?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  description       String?
+  agents            AgentProfile[]
+  attendance        Attendance[]
+  clientRequests    ClientRequest[]
+  geofences         Geofence[]
+  incidents         Incident[]
+  qrCodes           QRCode[]
+  reports           Report[]
+  shifts            Shift[]
+  client            ClientProfile   @relation(fields: [clientId], references: [id])
+  trackingLogs      TrackingLog[]
+
+  @@map("sites")
+}
+
+model Shift {
+  id                 String              @id @default(cuid())
+  agentId            String
+  siteId             String
+  startTime          DateTime
+  endTime            DateTime?
+  status             ShiftStatus         @default(SCHEDULED)
+  notes              String?
+  checkIns           Json?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  type               String?
+  attendance         Attendance[]
+  geofenceViolations GeofenceViolation[]
+  incidents          Incident[]
+  qrCodeScans        QRCodeScan[]
+  reports            Report[]
+  agent              AgentProfile        @relation(fields: [agentId], references: [id])
+  site               Site                @relation(fields: [siteId], references: [id])
+
+  @@map("shifts")
+}
+
+model Incident {
+  id           String           @id @default(cuid())
+  title        String
+  description  String
+  type         IncidentType
+  severity     IncidentSeverity @default(LOW)
+  status       IncidentStatus   @default(OPEN)
+  siteId       String
+  location     String?
+  reportedById String?
+  clientId     String?
+  shiftId      String?
+  occurredAt   DateTime
+  resolvedAt   DateTime?
+  evidence     Json?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  client       ClientProfile?   @relation(fields: [clientId], references: [id])
+  reportedBy   AgentProfile?    @relation(fields: [reportedById], references: [id])
+  shift        Shift?           @relation(fields: [shiftId], references: [id])
+  site         Site             @relation(fields: [siteId], references: [id])
+  reports      Report[]
+
+  @@map("incidents")
+}
+
+model Report {
+  id          String         @id @default(cuid())
+  title       String
+  content     String
+  type        ReportType
+  status      ReportStatus   @default(DRAFT)
+  authorId    String
+  siteId      String?
+  shiftId     String?
+  incidentId  String?
+  clientId    String?
+  reportDate  DateTime
+  attachments Json?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  priority    ReportPriority @default(NORMAL)
+  submittedAt DateTime?
+  author      AgentProfile   @relation(fields: [authorId], references: [id])
+  client      ClientProfile? @relation(fields: [clientId], references: [id])
+  incident    Incident?      @relation(fields: [incidentId], references: [id])
+  shift       Shift?         @relation(fields: [shiftId], references: [id])
+  site        Site?          @relation(fields: [siteId], references: [id])
+
+  @@map("reports")
+}
+
+model TrackingLog {
+  id         String       @id @default(cuid())
+  agentId    String
+  siteId     String?
+  latitude   Float
+  longitude  Float
+  accuracy   Float?
+  status     String
+  battery    Int?
+  deviceInfo Json?
+  timestamp  DateTime     @default(now())
+  agent      AgentProfile @relation(fields: [agentId], references: [id])
+  site       Site?        @relation(fields: [siteId], references: [id])
+
+  @@map("tracking_logs")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique
+  deviceInfo   Json?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Notification {
+  id                String               @id @default(cuid())
+  userId            String
+  type              NotificationType
+  priority          NotificationPriority @default(MEDIUM)
+  title             String
+  message           String
+  channels          String[]
+  status            NotificationStatus   @default(PENDING)
+  relatedEntityType String?
+  relatedEntityId   String?
+  actionUrl         String?
+  scheduledFor      DateTime?
+  sentAt            DateTime?
+  readAt            DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  isRead            Boolean              @default(false)
+  recipientId       String?
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model Integration {
+  id          String    @id @default(cuid())
+  name        String
+  type        String
+  config      Json
+  credentials Json?
+  isActive    Boolean   @default(true)
+  lastSync    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("integrations")
+}
+
+model QRCode {
+  id        String       @id @default(cuid())
+  siteId    String
+  code      String       @unique
+  type      QRCodeType   @default(CHECKIN)
+  isActive  Boolean      @default(true)
+  expiresAt DateTime?
+  scanCount Int          @default(0)
+  lastScan  DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  scans     QRCodeScan[]
+  site      Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@map("qr_codes")
+}
+
+model QRCodeScan {
+  id         String       @id @default(cuid())
+  qrCodeId   String
+  agentId    String
+  latitude   Float?
+  longitude  Float?
+  deviceInfo Json?
+  shiftId    String?
+  scannedAt  DateTime     @default(now())
+  agent      AgentProfile @relation(fields: [agentId], references: [id])
+  qrCode     QRCode       @relation(fields: [qrCodeId], references: [id])
+  shift      Shift?       @relation(fields: [shiftId], references: [id])
+
+  @@map("qr_code_scans")
+}
+
+model Geofence {
+  id          String               @id @default(cuid())
+  siteId      String
+  name        String
+  type        GeofenceType         @default(SITE_BOUNDARY)
+  coordinates Json
+  radius      Float?
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  validations GeofenceValidation[]
+  violations  GeofenceViolation[]
+  site        Site                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@map("geofences")
+}
+
+model GeofenceViolation {
+  id            String        @id @default(cuid())
+  geofenceId    String
+  agentId       String
+  violationType ViolationType
+  latitude      Float
+  longitude     Float
+  shiftId       String?
+  isResolved    Boolean       @default(false)
+  resolvedAt    DateTime?
+  notes         String?
+  occurredAt    DateTime      @default(now())
+  agent         AgentProfile  @relation(fields: [agentId], references: [id])
+  geofence      Geofence      @relation(fields: [geofenceId], references: [id])
+  shift         Shift?        @relation(fields: [shiftId], references: [id])
+
+  @@map("geofence_violations")
+}
+
+model GeofenceValidation {
+  id           String       @id @default(cuid())
+  geofenceId   String
+  agentId      String
+  action       String
+  latitude     Float
+  longitude    Float
+  isValid      Boolean
+  attendanceId String?
+  validatedAt  DateTime     @default(now())
+  agent        AgentProfile @relation(fields: [agentId], references: [id])
+  attendance   Attendance?  @relation(fields: [attendanceId], references: [id])
+  geofence     Geofence     @relation(fields: [geofenceId], references: [id])
+
+  @@map("geofence_validations")
+}
+
+model CommunicationGroup {
+  id          String                     @id @default(cuid())
+  name        String
+  description String?
+  type        GroupType                  @default(GENERAL)
+  isActive    Boolean                    @default(true)
+  isPrivate   Boolean                    @default(false)
+  createdById String
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+  members     CommunicationGroupMember[]
+  createdBy   User                       @relation(fields: [createdById], references: [id])
+  messages    Communication[]
+
+  @@map("communication_groups")
+}
+
+model CommunicationGroupMember {
+  id       String             @id @default(cuid())
+  groupId  String
+  userId   String
+  role     GroupMemberRole    @default(MEMBER)
+  joinedAt DateTime           @default(now())
+  group    CommunicationGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("communication_group_members")
+}
+
+model Communication {
+  id                String                    @id @default(cuid())
+  senderId          String
+  type              CommunicationType         @default(MESSAGE)
+  subject           String?
+  content           String
+  priority          MessagePriority           @default(NORMAL)
+  groupId           String?
+  relatedEntityType String?
+  relatedEntityId   String?
+  attachments       Json?
+  isUrgent          Boolean                   @default(false)
+  expiresAt         DateTime?
+  sentAt            DateTime                  @default(now())
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  attachmentFiles   CommunicationAttachment[]
+  group             CommunicationGroup?       @relation(fields: [groupId], references: [id])
+  sender            User                      @relation(fields: [senderId], references: [id])
+  recipients        MessageRecipient[]
+
+  @@map("communications")
+}
+
+model MessageRecipient {
+  id              String        @id @default(cuid())
+  communicationId String
+  userId          String
+  deliveredAt     DateTime?
+  readAt          DateTime?
+  acknowledgedAt  DateTime?
+  createdAt       DateTime      @default(now())
+  communication   Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([communicationId, userId])
+  @@map("message_recipients")
+}
+
+model CommunicationAttachment {
+  id              String        @id @default(cuid())
+  communicationId String
+  fileName        String
+  originalName    String
+  mimeType        String
+  fileSize        Int
+  filePath        String
+  uploadedAt      DateTime      @default(now())
+  communication   Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+
+  @@map("communication_attachments")
+}
+
+model Attendance {
+  id                String               @id @default(cuid())
+  agentId           String
+  shiftId           String?
+  siteId            String?
+  clockInTime       DateTime
+  clockInLatitude   Float?
+  clockInLongitude  Float?
+  clockInMethod     ClockMethod          @default(MANUAL)
+  clockInQRCode     String?
+  clockInNotes      String?
+  clockOutTime      DateTime?
+  clockOutLatitude  Float?
+  clockOutLongitude Float?
+  clockOutMethod    ClockMethod?
+  clockOutQRCode    String?
+  clockOutNotes     String?
+  totalHours        Float?
+  overtimeHours     Float?
+  status            AttendanceStatus     @default(ACTIVE)
+  isValidated       Boolean              @default(false)
+  validatedBy       String?
+  validatedAt       DateTime?
+  breaks            Json?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  agent             AgentProfile         @relation(fields: [agentId], references: [id])
+  shift             Shift?               @relation(fields: [shiftId], references: [id])
+  site              Site?                @relation(fields: [siteId], references: [id])
+  validations       GeofenceValidation[]
+
+  @@map("attendance")
+}
+
+model ClientRequest {
+  id               String          @id @default(cuid())
+  clientId         String
+  siteId           String?
+  type             RequestType
+  priority         RequestPriority @default(NORMAL)
+  title            String
+  description      String
+  requestedService String?
+  urgencyLevel     UrgencyLevel    @default(NORMAL)
+  requestedDate    DateTime?
+  requestedTime    String?
+  duration         Int?
+  assignedToId     String?
+  status           RequestStatus   @default(PENDING)
+  responseNotes    String?
+  actionTaken      String?
+  completedAt      DateTime?
+  estimatedCost    Decimal?
+  actualCost       Decimal?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  assignedTo       User?           @relation(fields: [assignedToId], references: [id])
+  client           ClientProfile   @relation(fields: [clientId], references: [id])
+  site             Site?           @relation(fields: [siteId], references: [id])
+
+  @@map("client_requests")
+}
+
+model PerformanceReview {
+  id                  String       @id @default(cuid())
+  agentId             String
+  reviewerId          String
+  periodStart         DateTime
+  periodEnd           DateTime
+  punctualityScore    Float?
+  qualityScore        Float?
+  communicationScore  Float?
+  overallRating       Float
+  strengths           String?
+  areasForImprovement String?
+  goals               String?
+  notes               String?
+  status              ReviewStatus @default(DRAFT)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  agent               AgentProfile @relation(fields: [agentId], references: [id])
+  reviewer            User         @relation("ReviewerReviews", fields: [reviewerId], references: [id])
+
+  @@map("performance_reviews")
+}
+
+model SkillAssessment {
+  id                    String         @id @default(cuid())
+  agentId               String
+  assessorId            String
+  skillName             String
+  skillCategory         String
+  level                 SkillLevel
+  score                 Float?
+  assessmentType        AssessmentType @default(PERIODIC)
+  certificationRequired Boolean        @default(false)
+  passed                Boolean        @default(false)
+  notes                 String?
+  validFrom             DateTime       @default(now())
+  validUntil            DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  agent                 AgentProfile   @relation(fields: [agentId], references: [id])
+  assessor              User           @relation("AssessorAssessments", fields: [assessorId], references: [id])
+
+  @@map("skill_assessments")
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+  SUPERVISOR
+  AGENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum ServiceLevel {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+}
+
+enum AccessLevel {
+  STANDARD
+  ELEVATED
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum SiteType {
+  BANK
+  RETAIL
+  OFFICE
+  RESIDENTIAL
+  INDUSTRIAL
+  OTHER
+}
+
+enum SiteStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum SecurityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ShiftStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum IncidentType {
+  SECURITY_BREACH
+  THEFT
+  VANDALISM
+  MEDICAL_EMERGENCY
+  FIRE
+  TECHNICAL_ISSUE
+  SUSPICIOUS_ACTIVITY
+  ACCESS_VIOLATION
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum ReportType {
+  DAILY
+  INCIDENT
+  SHIFT
+  MAINTENANCE
+  TRAINING
+  CUSTOM
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  REVIEWED
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  SYSTEM
+  SECURITY
+  INCIDENT
+  SHIFT
+  TRAINING
+  MAINTENANCE
+  BILLING
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum QRCodeType {
+  CHECKIN
+  CHECKOUT
+  PATROL_POINT
+  EMERGENCY
+}
+
+enum GeofenceType {
+  SITE_BOUNDARY
+  PATROL_AREA
+  RESTRICTED_ZONE
+  EMERGENCY_ZONE
+}
+
+enum ViolationType {
+  OUTSIDE_BOUNDARY
+  UNAUTHORIZED_AREA
+  MISSED_PATROL
+  EMERGENCY_BREACH
+}
+
+enum ClockMethod {
+  MANUAL
+  QR_CODE
+  GPS
+  BIOMETRIC
+}
+
+enum AttendanceStatus {
+  ACTIVE
+  COMPLETED
+  INCOMPLETE
+  DISPUTED
+}
+
+enum GroupType {
+  GENERAL
+  EMERGENCY
+  SITE_SPECIFIC
+  DEPARTMENT
+  PROJECT
+}
+
+enum GroupMemberRole {
+  MEMBER
+  MODERATOR
+  ADMIN
+}
+
+enum CommunicationType {
+  MESSAGE
+  ANNOUNCEMENT
+  ALERT
+  EMERGENCY
+  INSTRUCTION
+}
+
+enum MessagePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  EMERGENCY
+}
+
+enum RequestType {
+  ADDITIONAL_SECURITY
+  EMERGENCY_RESPONSE
+  MAINTENANCE
+  INCIDENT_REPORT
+  SERVICE_CHANGE
+  CONSULTATION
+  OTHER
+}
+
+enum RequestPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  EMERGENCY
+}
+
+enum UrgencyLevel {
+  NORMAL
+  URGENT
+  CRITICAL
+  EMERGENCY
+}
+
+enum RequestStatus {
+  PENDING
+  ACKNOWLEDGED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum ReviewStatus {
+  DRAFT
+  PENDING
+  COMPLETED
+  APPROVED
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum AssessmentType {
+  INITIAL
+  PERIODIC
+  CERTIFICATION
+  INCIDENT_BASED
+  PROMOTION
+}
+
+enum ReportPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum TrainingType {
+  ORIENTATION
+  SAFETY
+  TECHNICAL
+  COMPLIANCE
+  SOFT_SKILLS
+  CERTIFICATION_PREP
+  REFRESHER
+  SPECIALIZED
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+enum CertificationType {
+  SECURITY_LICENSE
+  FIRST_AID
+  CPR
+  FIRE_SAFETY
+  TECHNICAL
+  PROFESSIONAL
+  REGULATORY
+  INTERNAL
+}
+
+enum CertificationStatus {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+  REVOKED
+  PENDING_RENEWAL
+}
+
+model Training {
+  id              String                @id @default(cuid())
+  title           String
+  description     String?
+  type            TrainingType
+  category        String
+  duration        Int
+  isRequired      Boolean               @default(false) @map("is_required")
+  validityPeriod  Int?                  @map("validity_period")
+  materials       Json                  @default("[]")
+  prerequisites   String[]              @default([])
+  createdBy       String                @map("created_by")
+  isActive        Boolean               @default(true) @map("is_active")
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+  enrollments     TrainingEnrollment[]
+  completions     TrainingCompletion[]
+  creator         User                  @relation(fields: [createdBy], references: [id])
+
+  @@map("trainings")
+}
+
+model TrainingEnrollment {
+  id          String           @id @default(cuid())
+  trainingId  String           @map("training_id")
+  agentId     String           @map("agent_id")
+  enrolledBy  String?          @map("enrolled_by")
+  status      EnrollmentStatus @default(ENROLLED)
+  enrolledAt  DateTime         @default(now()) @map("enrolled_at")
+  dueDate     DateTime?        @map("due_date")
+  startedAt   DateTime?        @map("started_at")
+  completedAt DateTime?        @map("completed_at")
+  progress    Int              @default(0)
+  notes       String?
+  training    Training         @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  agent       AgentProfile     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  enrolledByUser User?         @relation(fields: [enrolledBy], references: [id])
+
+  @@unique([trainingId, agentId])
+  @@map("training_enrollments")
+}
+
+model TrainingCompletion {
+  id             String       @id @default(cuid())
+  trainingId     String
+  agentId        String
+  score          Float?
+  passed         Boolean      @default(false)
+  completedAt    DateTime     @default(now())
+  expiresAt      DateTime?
+  certificateUrl String?
+  notes          String?
+  training       Training     @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  agent          AgentProfile @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("training_completions")
+}
+
+model Certification {
+  id                  String                @id @default(cuid())
+  name                String
+  description         String?
+  issuingBody         String
+  type                CertificationType
+  validityPeriod      Int?
+  requirements        Json                  @default("[]")
+  isActive            Boolean               @default(true)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  agentCertifications AgentCertification[]
+
+  @@map("certifications")
+}
+
+model AgentCertification {
+  id                String              @id @default(cuid())
+  agentId           String
+  certificationId   String
+  obtainedAt        DateTime
+  expiresAt         DateTime?
+  certificateNumber String?
+  certificateUrl    String?
+  status            CertificationStatus @default(ACTIVE)
+  notes             String?
+  verifiedBy        String?
+  verifiedAt        DateTime?
+  agent             AgentProfile        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  certification     Certification       @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  verifier          User?               @relation(fields: [verifiedBy], references: [id])
+
+  @@unique([agentId, certificationId])
+  @@map("agent_certifications")
+}
+// Contract Management Models
+model Contract {
+  id            String            @id @default(cuid())
+  clientId      String            @map("client_id")
+  title         String
+  type          ContractType
+  status        ContractStatus    @default(DRAFT)
+  startDate     DateTime          @map("start_date")
+  endDate       DateTime          @map("end_date")
+  value         Decimal
+  currency      String            @default("USD")
+  renewalTerms  String?           @map("renewal_terms")
+  lastReviewed  DateTime?         @map("last_reviewed")
+  nextReview    DateTime?         @map("next_review")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  client        Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  slaMetrics    SLAMetric[]
+  documents     ContractDocument[]
+
+  @@map("contracts")
+}
+
+model SLAMetric {
+  id           String        @id @default(cuid())
+  contractId   String        @map("contract_id")
+  name         String
+  description  String?
+  target       Float
+  unit         String
+  currentValue Float         @default(0) @map("current_value")
+  status       SLAStatus     @default(MEETING)
+  lastUpdated  DateTime      @default(now()) @map("last_updated")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  contract     Contract      @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@map("sla_metrics")
+}
+
+model ContractDocument {
+  id         String            @id @default(cuid())
+  contractId String            @map("contract_id")
+  name       String
+  type       DocumentType
+  uploadDate DateTime          @default(now()) @map("upload_date")
+  size       String
+  url        String
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt @map("updated_at")
+  contract   Contract          @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@map("contract_documents")
+}
+
+// Add Client model if it doesn't exist
+model Client {
+  id           String     @id @default(cuid())
+  name         String
+  contactEmail String     @map("contact_email")
+  phone        String?
+  address      String?
+  status       String     @default("active")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  contracts    Contract[]
+
+  @@map("clients")
+}
+
+// Contract-related enums
+enum ContractType {
+  SECURITY_SERVICES
+  PATROL
+  MONITORING
+  CONSULTING
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  PENDING_RENEWAL
+}
+
+enum SLAStatus {
+  MEETING
+  AT_RISK
+  FAILING
+}
+
+enum DocumentType {
+  CONTRACT
+  AMENDMENT
+  SLA
+  INVOICE
+  REPORT
+}

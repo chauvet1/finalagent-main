@@ -1,0 +1,1012 @@
+{
+  error: Error: ENOENT: no such file or directory, open 'C:\Users\hauss\Pictures\agent\finalagent-main\test\data\05-versions-space.pdf'
+      at Object.openSync (node:fs:574:18)
+      at Object.readFileSync (node:fs:453:35)
+      at Object.<anonymous> (C:\Users\hauss\Pictures\agent\finalagent-main\node_modules\pdf-parse\index.js:15:25)
+      at Module._compile (node:internal/modules/cjs/loader:1529:14)
+      at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+      at Module.load (node:internal/modules/cjs/loader:1275:32)
+      at Module._load (node:internal/modules/cjs/loader:1096:12)
+      at cjsLoader (node:internal/modules/esm/translators:298:15)
+      at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+      at ModuleJob.run (node:internal/modules/esm/module_job:263:25) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'
+  },
+  level: 'error',
+  message: "unhandledRejection: ENOENT: no such file or directory, open 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'\n" +
+    "Error: ENOENT: no such file or directory, open 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'\n" +
+    '    at Object.openSync (node:fs:574:18)\n' +
+    '    at Object.readFileSync (node:fs:453:35)\n' +
+    '    at Object.<anonymous> (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\pdf-parse\\index.js:15:25)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1529:14)\n' +
+    '    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:1275:32)\n' +
+    '    at Module._load (node:internal/modules/cjs/loader:1096:12)\n' +
+    '    at cjsLoader (node:internal/modules/esm/translators:298:15)\n' +
+    '    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)\n' +
+    '    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)',
+  stack: "Error: ENOENT: no such file or directory, open 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'\n" +
+    '    at Object.openSync (node:fs:574:18)\n' +
+    '    at Object.readFileSync (node:fs:453:35)\n' +
+    '    at Object.<anonymous> (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\pdf-parse\\index.js:15:25)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1529:14)\n' +
+    '    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:1275:32)\n' +
+    '    at Module._load (node:internal/modules/cjs/loader:1096:12)\n' +
+    '    at cjsLoader (node:internal/modules/esm/translators:298:15)\n' +
+    '    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)\n' +
+    '    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)',
+  rejection: true,
+  date: 'Mon Jul 07 2025 17:51:35 GMT+0100 (West Africa Standard Time)',
+  process: {
+    pid: 6700,
+    uid: null,
+    gid: null,
+    cwd: 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main',
+    execPath: 'C:\\nvm4w\\nodejs\\node.exe',
+    version: 'v20.19.2',
+    argv: [
+      'C:\\nvm4w\\nodejs\\node.exe',
+      'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\src\\server.js'
+    ],
+    memoryUsage: {
+      rss: 85028864,
+      heapTotal: 46055424,
+      heapUsed: 33770592,
+      external: 3524547,
+      arrayBuffers: 66714
+    }
+  },
+  os: { loadavg: [ 0, 0, 0 ], uptime: 95020.312 },
+  trace: [
+    {
+      column: 18,
+      file: 'node:fs',
+      function: 'Object.openSync',
+      line: 574,
+      method: 'openSync',
+      native: false
+    },
+    {
+      column: 35,
+      file: 'node:fs',
+      function: 'Object.readFileSync',
+      line: 453,
+      method: 'readFileSync',
+      native: false
+    },
+    {
+      column: 25,
+      file: 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\pdf-parse\\index.js',
+      function: null,
+      line: 15,
+      method: null,
+      native: false
+    },
+    {
+      column: 14,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module._compile',
+      line: 1529,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module._extensions..js',
+      line: 1613,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module.load',
+      line: 1275,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 12,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module._load',
+      line: 1096,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 15,
+      file: 'node:internal/modules/esm/translators',
+      function: 'cjsLoader',
+      line: 298,
+      method: null,
+      native: false
+    },
+    {
+      column: 7,
+      file: 'node:internal/modules/esm/translators',
+      function: null,
+      line: 240,
+      method: null,
+      native: false
+    },
+    {
+      column: 25,
+      file: 'node:internal/modules/esm/module_job',
+      function: 'ModuleJob.run',
+      line: 263,
+      method: 'run',
+      native: false
+    }
+  ],
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  timestamp: '2025-07-07 17:51:35'
+}
+{
+  error: Error: ENOENT: no such file or directory, open 'C:\Users\hauss\Pictures\agent\finalagent-main\test\data\05-versions-space.pdf'
+      at Object.openSync (node:fs:574:18)
+      at Object.readFileSync (node:fs:453:35)
+      at Object.<anonymous> (C:\Users\hauss\Pictures\agent\finalagent-main\node_modules\pdf-parse\index.js:15:25)
+      at Module._compile (node:internal/modules/cjs/loader:1529:14)
+      at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+      at Module.load (node:internal/modules/cjs/loader:1275:32)
+      at Module._load (node:internal/modules/cjs/loader:1096:12)
+      at cjsLoader (node:internal/modules/esm/translators:298:15)
+      at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+      at ModuleJob.run (node:internal/modules/esm/module_job:263:25) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'
+  },
+  level: 'error',
+  message: "unhandledRejection: ENOENT: no such file or directory, open 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'\n" +
+    "Error: ENOENT: no such file or directory, open 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'\n" +
+    '    at Object.openSync (node:fs:574:18)\n' +
+    '    at Object.readFileSync (node:fs:453:35)\n' +
+    '    at Object.<anonymous> (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\pdf-parse\\index.js:15:25)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1529:14)\n' +
+    '    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:1275:32)\n' +
+    '    at Module._load (node:internal/modules/cjs/loader:1096:12)\n' +
+    '    at cjsLoader (node:internal/modules/esm/translators:298:15)\n' +
+    '    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)\n' +
+    '    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)',
+  stack: "Error: ENOENT: no such file or directory, open 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\test\\data\\05-versions-space.pdf'\n" +
+    '    at Object.openSync (node:fs:574:18)\n' +
+    '    at Object.readFileSync (node:fs:453:35)\n' +
+    '    at Object.<anonymous> (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\pdf-parse\\index.js:15:25)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1529:14)\n' +
+    '    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:1275:32)\n' +
+    '    at Module._load (node:internal/modules/cjs/loader:1096:12)\n' +
+    '    at cjsLoader (node:internal/modules/esm/translators:298:15)\n' +
+    '    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)\n' +
+    '    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)',
+  rejection: true,
+  date: 'Mon Jul 07 2025 17:56:48 GMT+0100 (West Africa Standard Time)',
+  process: {
+    pid: 13964,
+    uid: null,
+    gid: null,
+    cwd: 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main',
+    execPath: 'C:\\nvm4w\\nodejs\\node.exe',
+    version: 'v20.19.2',
+    argv: [
+      'C:\\nvm4w\\nodejs\\node.exe',
+      'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\src\\server.js'
+    ],
+    memoryUsage: {
+      rss: 106569728,
+      heapTotal: 67448832,
+      heapUsed: 47845216,
+      external: 3578033,
+      arrayBuffers: 118678
+    }
+  },
+  os: { loadavg: [ 0, 0, 0 ], uptime: 95333.562 },
+  trace: [
+    {
+      column: 18,
+      file: 'node:fs',
+      function: 'Object.openSync',
+      line: 574,
+      method: 'openSync',
+      native: false
+    },
+    {
+      column: 35,
+      file: 'node:fs',
+      function: 'Object.readFileSync',
+      line: 453,
+      method: 'readFileSync',
+      native: false
+    },
+    {
+      column: 25,
+      file: 'C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\pdf-parse\\index.js',
+      function: null,
+      line: 15,
+      method: null,
+      native: false
+    },
+    {
+      column: 14,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module._compile',
+      line: 1529,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module._extensions..js',
+      line: 1613,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module.load',
+      line: 1275,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 12,
+      file: 'node:internal/modules/cjs/loader',
+      function: 'Module._load',
+      line: 1096,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 15,
+      file: 'node:internal/modules/esm/translators',
+      function: 'cjsLoader',
+      line: 298,
+      method: null,
+      native: false
+    },
+    {
+      column: 7,
+      file: 'node:internal/modules/esm/translators',
+      function: null,
+      line: 240,
+      method: null,
+      native: false
+    },
+    {
+      column: 25,
+      file: 'node:internal/modules/esm/module_job',
+      function: 'ModuleJob.run',
+      line: 263,
+      method: 'run',
+      native: false
+    }
+  ],
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  timestamp: '2025-07-07 17:56:48'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:12:55'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:12:56'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:12:56'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:12:57'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:12:57'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:12:58'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:13:00'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:13:00'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:07'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:08'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:08'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:09'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:09'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:10'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:31:12'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:31:12'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:19'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:20'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:20'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:21'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:21'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:22'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:39:24'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:39:24'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:46'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:47'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:47'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:48'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:48'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:49'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:40:51'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:40:51'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:03'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:04'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:04'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:04'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:05'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:06'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:44:08'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:44:08'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:29'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:30'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:30'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:30'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:31'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:32'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:47:33'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:47:34'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:35'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:36'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:36'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:36'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:37'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:38'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 18:50:40'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 18:50:40'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:01:55'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:01:56'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:01:56'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:01:57'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:01:57'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:01:58'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 19:02:00'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:03:42'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:03:43'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:03:43'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:03:43'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:03:44'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-07 19:03:45'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-07 19:03:46'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-08 10:10:19'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-08 10:10:22'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-08 10:10:23'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-08 10:10:23'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-08 10:10:23'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-08 10:10:24'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-09 14:28:37'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-09 14:28:43'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-09 14:28:43'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  statusCode: 404,
+  message: 'API Error: Route /favicon.ico not found',
+  stack: 'Error: Route /favicon.ico not found\n' +
+    '    at notFoundHandler (file:///C:/Users/hauss/Pictures/agent/finalagent-main/src/middleware/errorHandler.js:165:17)\n' +
+    '    at newFn (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express-async-errors\\index.js:16:20)\n' +
+    '    at Layer.handle [as handle_request] (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express\\lib\\router\\layer.js:95:5)\n' +
+    '    at trim_prefix (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express\\lib\\router\\index.js:328:13)\n' +
+    '    at C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express\\lib\\router\\index.js:286:9\n' +
+    '    at Function.process_params (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express\\lib\\router\\index.js:346:12)\n' +
+    '    at next (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express\\lib\\router\\index.js:280:10)\n' +
+    '    at requestLogger (file:///C:/Users/hauss/Pictures/agent/finalagent-main/src/middleware/requestLogger.js:102:3)\n' +
+    '    at newFn (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express-async-errors\\index.js:16:20)\n' +
+    '    at Layer.handle [as handle_request] (C:\\Users\\hauss\\Pictures\\agent\\finalagent-main\\node_modules\\express\\lib\\router\\layer.js:95:5)',
+  url: '/favicon.ico',
+  method: 'GET',
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+  userId: undefined,
+  requestId: 'd1367bfc-4b87-4c7c-8760-b3199e640305',
+  level: 'warn',
+  timestamp: '2025-07-09 15:07:54'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  requestId: 'd1367bfc-4b87-4c7c-8760-b3199e640305',
+  method: 'GET',
+  url: '/favicon.ico',
+  statusCode: 404,
+  responseTime: '56ms',
+  userId: undefined,
+  level: 'warn',
+  message: 'Request Error',
+  timestamp: '2025-07-09 15:07:54'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-09 16:20:30'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-09 16:20:39'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-09 16:20:39'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis Client Error (non-critical):',
+  timestamp: '2025-07-09 20:05:59'
+}
+{
+  service: 'bahinlink-api',
+  environment: 'development',
+  version: '1.0.0',
+  level: 'warn',
+  message: 'Redis initialization failed (continuing without Redis):',
+  timestamp: '2025-07-09 20:06:13'
+}
