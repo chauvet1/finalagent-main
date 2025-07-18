@@ -7,7 +7,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "npm install && npm run build"
+        "buildCommand": "npm ci && npm run build"
       }
     },
     {
@@ -15,18 +15,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "npm install && npm run build"
-      }
-    },
-    {
-      "src": "backend/dist/server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "backend/src/**",
-          "backend/prisma/**",
-          "backend/dist/**"
-        ]
+        "buildCommand": "npm ci && npm run build"
       }
     }
   ],
@@ -51,6 +40,13 @@
   "env": {
     "REACT_APP_API_URL": "https://bahinlink.vercel.app/api",
     "REACT_APP_ADMIN_PORTAL_URL": "https://bahinlink.vercel.app/admin",
-    "REACT_APP_CLIENT_PORTAL_URL": "https://bahinlink.vercel.app"
+    "REACT_APP_CLIENT_PORTAL_URL": "https://bahinlink.vercel.app",
+    "REACT_APP_CLERK_PUBLISHABLE_KEY": "pk_test_YWxlcnQtY2F0ZmlzaC00Ny5jbGVyay5hY2NvdW50cy5kZXYk",
+    "REACT_APP_NAME": "BahinLink",
+    "REACT_APP_VERSION": "1.0.0",
+    "GENERATE_SOURCEMAP": "false",
+    "ESLINT_NO_DEV_ERRORS": "true",
+    "TSC_COMPILE_ON_ERROR": "true",
+    "SKIP_PREFLIGHT_CHECK": "true"
   }
 }

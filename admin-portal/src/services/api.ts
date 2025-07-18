@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { createTokenProvider, detectTokenType } from './tokenProvider';
 
 // API Configuration
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost/api';
@@ -11,9 +12,6 @@ const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-// Import token provider for proper token handling
-import { createTokenProvider, detectTokenType } from './tokenProvider';
 
 // Create a global token provider instance
 let globalTokenProvider: any = null;

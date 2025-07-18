@@ -9,14 +9,17 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 
-# Build outputs (except the one we want)
+# Build outputs and unused directories
 backend/
 mobile/
-client-portal/
 docs/
 scripts/
 prisma/
 .github/
+
+# Keep client-portal and admin-portal for Vercel builds
+# client-portal/ - REMOVED (needed for build)
+# admin-portal/ - REMOVED (needed for build)
 
 # Runtime data
 pids
