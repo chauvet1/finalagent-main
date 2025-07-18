@@ -38,7 +38,8 @@ import {
 import {
   handleAdminPortalAccess,
   handleClientPortalAccess,
-  debugNavigation
+  debugNavigation,
+  debugPortalUrls
 } from '../../utils/navigationUtils';
 
 const HomePage: React.FC = () => {
@@ -51,6 +52,9 @@ const HomePage: React.FC = () => {
 
   // Debug user role and navigation information when signed in
   React.useEffect(() => {
+    // Always debug portal URLs on page load
+    debugPortalUrls();
+
     if (isSignedIn && user) {
       debugUserRole(user);
       debugNavigation(user);

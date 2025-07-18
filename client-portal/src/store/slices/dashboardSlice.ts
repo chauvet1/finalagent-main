@@ -91,9 +91,23 @@ export const fetchDashboardData = createAsyncThunk(
   'dashboard/fetchData',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get('/analytics/dashboard');
-      return response.data;
+      // Use multiple API calls to get comprehensive dashboard data
+      const [dashboardResponse, analyticsResponse, sitesResponse] = await Promise.all([
+        apiClient.get('/client-portal/dashboard'),
+        apiClient.get('/client-portal/analytics'),
+        apiClient.get('/client-portal/sites')
+      ]);
+
+      // Combine the responses into a unified dashboard data structure
+      return {
+        metrics: dashboardResponse.data?.metrics || analyticsResponse.data?.metrics || {},
+        alerts: dashboardResponse.data?.alerts || [],
+        recentActivity: dashboardResponse.data?.recentActivity || [],
+        siteStatuses: sitesResponse.data?.sites || sitesResponse.data || [],
+        performanceData: analyticsResponse.data?.performanceData || null
+      };
     } catch (error: any) {
+      console.error('Dashboard data fetch error:', error);
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch dashboard data');
     }
   }

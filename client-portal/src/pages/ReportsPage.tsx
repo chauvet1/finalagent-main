@@ -102,7 +102,7 @@ const ReportsPage: React.FC = () => {
 
       // Get current token info for debugging
       const tokenInfo = await getCurrentTokenInfo();
-      console.debug(`Loading client reports with ${tokenInfo.type} token`);
+      console.debug(`Loading client reports with ${tokenInfo?.type || 'unknown'} token`);
 
       // Use the enhanced client API service
       const reportsResponse = await clientAPI.getReports();
@@ -142,7 +142,7 @@ const ReportsPage: React.FC = () => {
     try {
       // Get current token info for debugging
       const tokenInfo = await getCurrentTokenInfo();
-      console.debug(`Exporting reports with ${tokenInfo.type} token`);
+      console.debug(`Exporting reports with ${tokenInfo?.type || 'unknown'} token`);
 
       // Note: Since there's no specific export endpoint in the enhanced service,
       // we'll simulate the export for now

@@ -1,15 +1,32 @@
 /**
  * Navigation utilities for handling cross-portal navigation
- * Manages routing between client portal (port 3000) and admin portal (port 3001)
+ * Manages routing between client portal and admin portal with environment-aware URLs
  */
 
 import { getUserRole, isAdmin, isClient } from './roleUtils';
+import { getEnvironmentConfig, debugEnvironmentConfig } from '../config/environment';
 
-// Portal URLs
-export const PORTAL_URLS = {
-  CLIENT: 'http://localhost:3000',
-  ADMIN: 'http://localhost:3002',
-  API: 'http://localhost:8000'
+// Portal URLs - Use centralized environment configuration
+export const getPortalUrls = () => {
+  const config = getEnvironmentConfig();
+  return {
+    CLIENT: config.portals.client,
+    ADMIN: config.portals.admin,
+    API: config.portals.api
+  };
+};
+
+// Export PORTAL_URLS for backward compatibility
+export const PORTAL_URLS = new Proxy({} as any, {
+  get(target, prop) {
+    const urls = getPortalUrls();
+    return urls[prop as keyof typeof urls];
+  }
+});
+
+// Debug function to log current portal URLs (uses centralized config)
+export const debugPortalUrls = (): void => {
+  debugEnvironmentConfig();
 };
 
 // Portal routes

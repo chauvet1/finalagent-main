@@ -100,7 +100,7 @@ const IncidentsPage: React.FC = () => {
 
       // Get current token info for debugging
       const tokenInfo = await getCurrentTokenInfo();
-      console.debug(`Loading incidents with ${tokenInfo.type} token`);
+      console.debug(`Loading incidents with ${tokenInfo?.type || 'unknown'} token`);
 
       const params = {
         page: page.toString(),

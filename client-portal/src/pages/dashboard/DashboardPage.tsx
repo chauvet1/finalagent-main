@@ -34,7 +34,10 @@ import LiveMapCard from '../../components/dashboard/LiveMapCard';
 const DashboardPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [refreshing, setRefreshing] = useState(false);
-  
+  const [retryCount, setRetryCount] = useState(0);
+  const [circuitBreakerOpen, setCircuitBreakerOpen] = useState(false);
+  const [lastLoadAttempt, setLastLoadAttempt] = useState<number>(0);
+
   const {
     metrics,
     recentActivity,
@@ -56,16 +59,53 @@ const DashboardPage: React.FC = () => {
   });
 
   const loadDashboardData = useCallback(async () => {
+    // Circuit breaker: prevent rapid successive calls
+    const now = Date.now();
+    if (now - lastLoadAttempt < 2000) { // Minimum 2 seconds between calls
+      console.debug('Dashboard load throttled - too soon since last attempt');
+      return;
+    }
+
+    if (circuitBreakerOpen) {
+      console.debug('Dashboard circuit breaker is open - skipping load');
+      return;
+    }
+
+    setLastLoadAttempt(now);
+
     try {
       await dispatch(fetchDashboardData()).unwrap();
-    } catch (error) {
+      // Reset retry count on success
+      setRetryCount(0);
+      setCircuitBreakerOpen(false);
+    } catch (error: any) {
       console.error('Failed to load dashboard data:', error);
+
+      // Increment retry count
+      const newRetryCount = retryCount + 1;
+      setRetryCount(newRetryCount);
+
+      // Open circuit breaker after 3 consecutive failures
+      if (newRetryCount >= 3) {
+        setCircuitBreakerOpen(true);
+        console.warn('Dashboard circuit breaker opened due to repeated failures');
+
+        // Reset circuit breaker after 30 seconds
+        setTimeout(() => {
+          setCircuitBreakerOpen(false);
+          setRetryCount(0);
+          console.info('Dashboard circuit breaker reset');
+        }, 30000);
+      }
     }
-  }, [dispatch]);
+  }, [dispatch, retryCount, circuitBreakerOpen, lastLoadAttempt]);
 
   useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
+    // Only load on initial mount, not on every render
+    if (!isLoading && !lastUpdated && !circuitBreakerOpen) {
+      loadDashboardData();
+    }
+  }, []); // Empty dependency array to run only once
 
   const handleRefresh = async () => {
     setRefreshing(true);

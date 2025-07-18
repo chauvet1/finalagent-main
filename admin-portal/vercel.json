@@ -23,10 +23,10 @@
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://your-backend-url.vercel.app/api",
-    "REACT_APP_WS_URL": "wss://your-backend-url.vercel.app",
-    "REACT_APP_ADMIN_PORTAL_URL": "https://bahinlink-admin.vercel.app",
-    "REACT_APP_CLIENT_PORTAL_URL": "https://bahinlink-client.vercel.app",
+    "REACT_APP_API_URL": "https://finalagent-main-eywj.vercel.app/api",
+    "REACT_APP_WS_URL": "wss://finalagent-main-eywj.vercel.app",
+    "REACT_APP_ADMIN_PORTAL_URL": "https://finalagent-main-eywj.vercel.app/admin",
+    "REACT_APP_CLIENT_PORTAL_URL": "https://finalagent-main-eywj.vercel.app",
     "REACT_APP_CLERK_PUBLISHABLE_KEY": "pk_test_YWxlcnQtY2F0ZmlzaC00Ny5jbGVyay5hY2NvdW50cy5kZXYk",
     "REACT_APP_NAME": "BahinLink Admin",
     "REACT_APP_VERSION": "1.0.0"

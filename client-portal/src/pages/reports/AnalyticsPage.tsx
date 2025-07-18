@@ -63,7 +63,7 @@ const AnalyticsPage: React.FC = () => {
 
       // Get current token info for debugging
       const tokenInfo = await getCurrentTokenInfo();
-      console.debug(`Loading analytics with ${tokenInfo.type} token`);
+      console.debug(`Loading analytics with ${tokenInfo?.type || 'unknown'} token`);
 
       // Use the enhanced API service (token automatically injected)
       const response = await clientAPI.getAnalytics();

@@ -189,8 +189,19 @@ const SettingsPage: React.FC = () => {
     email: '',
     isPrimary: false,
   });
-  const [newPaymentMethod, setNewPaymentMethod] = useState({
-    type: 'CREDIT_CARD' as const,
+  const [newPaymentMethod, setNewPaymentMethod] = useState<{
+    type: 'CREDIT_CARD' | 'BANK_ACCOUNT' | 'ACH';
+    nickname: string;
+    cardNumber: string;
+    expiryMonth: string;
+    expiryYear: string;
+    cvv: string;
+    bankName: string;
+    accountNumber: string;
+    routingNumber: string;
+    accountType: 'CHECKING' | 'SAVINGS';
+  }>({
+    type: 'CREDIT_CARD',
     nickname: '',
     cardNumber: '',
     expiryMonth: '',
@@ -199,7 +210,7 @@ const SettingsPage: React.FC = () => {
     bankName: '',
     accountNumber: '',
     routingNumber: '',
-    accountType: 'CHECKING' as const,
+    accountType: 'CHECKING',
   });
 
   // Data fetching functions
@@ -1405,7 +1416,7 @@ const SettingsPage: React.FC = () => {
                   <Select
                     value={newPaymentMethod.type}
                     label="Payment Method Type"
-                    onChange={(e) => setNewPaymentMethod({ ...newPaymentMethod, type: e.target.value as 'CREDIT_CARD' | 'BANK_ACCOUNT' })}
+                    onChange={(e) => setNewPaymentMethod({ ...newPaymentMethod, type: e.target.value as 'CREDIT_CARD' | 'BANK_ACCOUNT' | 'ACH' })}
                   >
                     <MenuItem value="CREDIT_CARD">Credit Card</MenuItem>
                     <MenuItem value="BANK_ACCOUNT">Bank Account</MenuItem>

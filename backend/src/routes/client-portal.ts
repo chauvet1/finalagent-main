@@ -189,6 +189,145 @@ router.get('/dashboard', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/client-portal/analytics - Get client analytics data
+router.get('/analytics', requireAuth, async (req, res) => {
+  try {
+    // Get client ID from authenticated user
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'User not authenticated'
+        }
+      });
+    }
+
+    let clientId = user.clientId;
+
+    if (!clientId) {
+      // Try to find client by email for development
+      const client = await prisma.client.findFirst({
+        where: {
+          OR: [
+            { contactEmail: user.email },
+            { users: { some: { email: user.email } } }
+          ]
+        }
+      });
+
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          error: {
+            code: 'CLIENT_NOT_FOUND',
+            message: 'Client not found for user'
+          }
+        });
+      }
+      clientId = client.id;
+    }
+
+    // Get client's sites
+    const sites = await prisma.site.findMany({
+      where: { clientId },
+      select: { id: true }
+    });
+
+    const siteIds = sites.map(site => site.id);
+
+    // Calculate date ranges
+    const now = new Date();
+    const today = new Date(now);
+    today.setHours(0, 0, 0, 0);
+    const thisWeek = new Date(today);
+    thisWeek.setDate(today.getDate() - 7);
+    const thisMonth = new Date(today);
+    thisMonth.setDate(today.getDate() - 30);
+
+    // Get performance metrics
+    const [
+      totalReports,
+      weeklyReports,
+      monthlyReports,
+      totalIncidents,
+      weeklyIncidents,
+      monthlyIncidents,
+      averageResponseTime
+    ] = await Promise.all([
+      prisma.report.count({
+        where: { siteId: { in: siteIds } }
+      }),
+      prisma.report.count({
+        where: {
+          siteId: { in: siteIds },
+          createdAt: { gte: thisWeek }
+        }
+      }),
+      prisma.report.count({
+        where: {
+          siteId: { in: siteIds },
+          createdAt: { gte: thisMonth }
+        }
+      }),
+      prisma.report.count({
+        where: {
+          siteId: { in: siteIds },
+          type: 'INCIDENT'
+        }
+      }),
+      prisma.report.count({
+        where: {
+          siteId: { in: siteIds },
+          type: 'INCIDENT',
+          createdAt: { gte: thisWeek }
+        }
+      }),
+      prisma.report.count({
+        where: {
+          siteId: { in: siteIds },
+          type: 'INCIDENT',
+          createdAt: { gte: thisMonth }
+        }
+      }),
+      // Calculate average response time (mock for now)
+      Promise.resolve(15.5)
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        metrics: {
+          totalReports,
+          weeklyReports,
+          monthlyReports,
+          totalIncidents,
+          weeklyIncidents,
+          monthlyIncidents,
+          averageResponseTime,
+          complianceScore: 92.5 // Mock data
+        },
+        performanceData: {
+          responseTime: averageResponseTime,
+          incidentResolution: 98.2,
+          patrolCompletion: 99.1,
+          clientSatisfaction: 94.7
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching client analytics:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch analytics data'
+      }
+    });
+  }
+});
+
 // GET /api/client-portal/reports - Get client's reports
 router.get('/reports', [
   requireAuth,

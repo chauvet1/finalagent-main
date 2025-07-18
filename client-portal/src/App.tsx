@@ -12,6 +12,9 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import { SocketProvider } from './providers/SocketProvider';
 import { NotificationProvider } from './providers/NotificationProvider';
 
+// Environment configuration test (runs automatically in development)
+import './utils/environmentTest';
+
 // Components
 import Sidebar from './components/layout/Sidebar';
 

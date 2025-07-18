@@ -1,7 +1,14 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { createTokenProvider } from './tokenProvider';
+import { getEnvironmentConfig } from '../config/environment';
 
-// API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost/api';
+// API Configuration - Use centralized environment config
+const getApiBaseUrl = () => {
+  const config = getEnvironmentConfig();
+  return config.portals.api;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -12,16 +19,55 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+// Initialize token provider
+let tokenProvider: any = null;
+
+const initializeTokenProvider = () => {
+  if (!tokenProvider) {
+    // Try to get Clerk auth if available
+    const clerkAuth = (window as any).Clerk?.session;
+    tokenProvider = createTokenProvider(clerkAuth, {
+      developmentMode: process.env.NODE_ENV === 'development',
+      fallbackEmail: 'client@bahinlink.com'
+    });
+  }
+  return tokenProvider;
+};
+
+// Request interceptor to add auth token using token provider
 apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    try {
+      const provider = initializeTokenProvider();
+      const token = await provider.getAuthToken();
+      const tokenType = await provider.getTokenType();
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+        config.headers['X-Token-Type'] = tokenType;
+        console.debug(`API request with ${tokenType} token`);
+      }
+    } catch (error) {
+      console.debug('Failed to get authentication token:', error);
+
+      // Fallback to localStorage token
+      const fallbackToken = localStorage.getItem('token');
+      if (fallbackToken) {
+        config.headers.Authorization = `Bearer ${fallbackToken}`;
+        config.headers['X-Token-Type'] = 'stored';
+        console.debug('Using fallback localStorage token');
+      } else if (process.env.NODE_ENV === 'development') {
+        // Development fallback
+        const devToken = 'dev:client@bahinlink.com';
+        config.headers.Authorization = `Bearer ${devToken}`;
+        config.headers['X-Token-Type'] = 'development';
+        console.debug('Using development fallback token');
+      }
     }
     return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -42,7 +88,7 @@ apiClient.interceptors.response.use(
 // Client Portal specific API endpoints
 export const clientPortalAPI = {
   // Dashboard
-  getDashboard: () => apiClient.get('/analytics/dashboard'),
+  getDashboard: () => apiClient.get('/client-portal/dashboard'),
   
   // Agent tracking and monitoring
   getAgentTracking: (siteId?: string) => 
@@ -284,24 +330,99 @@ export const getAuthToken = () => {
   return localStorage.getItem('token');
 };
 
-export const isAuthenticated = () => {
-  return !!getAuthToken();
+export const isAuthenticated = async () => {
+  try {
+    const provider = initializeTokenProvider();
+    return await provider.hasValidToken();
+  } catch (error) {
+    console.debug('Authentication check failed:', error);
+    return !!getAuthToken(); // Fallback to localStorage
+  }
 };
 
 // Additional utility functions for compatibility
-export const isAuthenticationAvailable = () => {
-  return !!getAuthToken();
+export const isAuthenticationAvailable = async () => {
+  try {
+    const provider = initializeTokenProvider();
+    return await provider.hasValidToken();
+  } catch (error) {
+    console.debug('Authentication availability check failed:', error);
+    return !!getAuthToken(); // Fallback to localStorage
+  }
 };
 
-export const getCurrentTokenInfo = () => {
-  const token = getAuthToken();
-  return token ? { token, type: 'bearer' } : null;
+export const getCurrentTokenInfo = async () => {
+  try {
+    const provider = initializeTokenProvider();
+    const tokenInfo = await provider.getTokenInfo();
+    return {
+      token: tokenInfo.token,
+      type: tokenInfo.type,
+      isValid: tokenInfo.isValid
+    };
+  } catch (error) {
+    console.debug('Failed to get token info:', error);
+    const fallbackToken = getAuthToken();
+    return fallbackToken ? { token: fallbackToken, type: 'stored', isValid: true } : null;
+  }
+};
+
+// Force token refresh
+export const refreshAuthToken = async (): Promise<boolean> => {
+  try {
+    const provider = initializeTokenProvider();
+    const tokenInfo = await provider.getTokenInfo();
+
+    if (tokenInfo.isValid) {
+      console.debug(`Token refreshed successfully: ${tokenInfo.type}`);
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error('Failed to refresh auth token:', error);
+    return false;
+  }
+};
+
+// Clear authentication state
+export const clearAuthenticationState = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('authToken');
+  delete apiClient.defaults.headers.common['Authorization'];
+  delete apiClient.defaults.headers.common['X-Token-Type'];
+  console.debug('Authentication state cleared');
+};
+
+// Create authenticated request helper
+export const createAuthenticatedRequest = async (config: AxiosRequestConfig) => {
+  try {
+    const provider = initializeTokenProvider();
+    const token = await provider.getAuthToken();
+    const tokenType = await provider.getTokenType();
+
+    return {
+      ...config,
+      headers: {
+        ...config.headers,
+        'Authorization': `Bearer ${token}`,
+        'X-Token-Type': tokenType
+      }
+    };
+  } catch (error) {
+    console.error('Failed to create authenticated request:', error);
+    return config;
+  }
+};
+
+// Reset token provider (for testing)
+export const resetTokenProvider = () => {
+  tokenProvider = null;
 };
 
 // Alias for clientPortalAPI for backward compatibility
 export const clientAPI = clientPortalAPI;
-
-
 
 // Initialize auth token on app start
 const token = getAuthToken();

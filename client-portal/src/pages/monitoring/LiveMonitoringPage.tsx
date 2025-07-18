@@ -82,11 +82,11 @@ const LiveMonitoringPage: React.FC = () => {
       try {
         // Get current token info for socket authentication
         const tokenInfo = await getCurrentTokenInfo();
-        console.debug(`Initializing socket with ${tokenInfo.type} token`);
+        console.debug(`Initializing socket with ${tokenInfo?.type || 'unknown'} token`);
 
         const newSocket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
           auth: {
-            token: tokenInfo.token,
+            token: tokenInfo?.token || '',
           },
         });
 
@@ -168,11 +168,11 @@ const LiveMonitoringPage: React.FC = () => {
 
       // Get current token info for debugging
       const tokenInfo = await getCurrentTokenInfo();
-      console.debug(`Loading monitoring data with ${tokenInfo.type} token`);
+      console.debug(`Loading monitoring data with ${tokenInfo?.type || 'unknown'} token`);
 
       // Use the enhanced client API service with proper authentication
       const [trackingResponse, sitesResponse] = await Promise.all([
-        clientAPI.getAgentTracking({ siteId: selectedSite !== 'all' ? selectedSite : undefined }),
+        selectedSite !== 'all' ? clientAPI.getAgentTracking(selectedSite) : clientAPI.getAgentTracking(),
         clientAPI.getSites(),
       ]);
 
