@@ -25,12 +25,12 @@
       "destination": "/backend/dist/server.js"
     },
     {
-      "source": "/admin/(.*)",
-      "destination": "/admin-portal/index.html"
+      "source": "/admin/static/(.*)",
+      "destination": "/admin-portal/static/$1"
     },
     {
-      "source": "/admin-static/(.*)",
-      "destination": "/admin-portal/static/$1"
+      "source": "/admin/(.*)",
+      "destination": "/admin-portal/index.html"
     },
     {
       "source": "/(.*)",
