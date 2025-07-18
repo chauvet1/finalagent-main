@@ -98,12 +98,46 @@ export const fetchDashboardData = createAsyncThunk(
         apiClient.get('/client-portal/sites')
       ]);
 
+      // Sanitize data to prevent undefined values
+      const sanitizeArray = (arr: any[]) => {
+        if (!Array.isArray(arr)) return [];
+        return arr.map(item => ({
+          ...item,
+          timestamp: item?.timestamp || new Date().toISOString(),
+          id: item?.id || Math.random().toString(36).substr(2, 9),
+          title: item?.title || 'N/A',
+          message: item?.message || 'N/A',
+          description: item?.description || 'N/A',
+          priority: item?.priority || 'LOW',
+          type: item?.type || 'info',
+          status: item?.status || 'ACTIVE',
+          name: item?.name || 'Unknown',
+          agentsOnSite: item?.agentsOnSite || 0,
+          lastUpdate: item?.lastUpdate || new Date().toISOString()
+        }));
+      };
+
+      const sanitizeMetrics = (metrics: any) => ({
+        activeSites: metrics?.activeSites || 0,
+        activeShifts: metrics?.activeShifts || 0,
+        incidentsToday: metrics?.incidentsToday || 0,
+        pendingRequests: metrics?.pendingRequests || 0,
+        totalReports: metrics?.totalReports || 0,
+        weeklyReports: metrics?.weeklyReports || 0,
+        monthlyReports: metrics?.monthlyReports || 0,
+        totalIncidents: metrics?.totalIncidents || 0,
+        weeklyIncidents: metrics?.weeklyIncidents || 0,
+        monthlyIncidents: metrics?.monthlyIncidents || 0,
+        averageResponseTime: metrics?.averageResponseTime || 0,
+        complianceScore: metrics?.complianceScore || 0
+      });
+
       // Combine the responses into a unified dashboard data structure
       return {
-        metrics: dashboardResponse.data?.metrics || analyticsResponse.data?.metrics || {},
-        alerts: dashboardResponse.data?.alerts || [],
-        recentActivity: dashboardResponse.data?.recentActivity || [],
-        siteStatuses: sitesResponse.data?.sites || sitesResponse.data || [],
+        metrics: sanitizeMetrics(dashboardResponse.data?.metrics || analyticsResponse.data?.metrics || {}),
+        alerts: sanitizeArray(dashboardResponse.data?.alerts || []),
+        recentActivity: sanitizeArray(dashboardResponse.data?.recentActivity || []),
+        siteStatuses: sanitizeArray(sitesResponse.data?.sites || sitesResponse.data || []),
         performanceData: analyticsResponse.data?.performanceData || null
       };
     } catch (error: any) {

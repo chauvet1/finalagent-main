@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { Alert, Button, Box } from '@mui/material';
 
 interface ErrorBoundaryProps {
@@ -18,6 +18,21 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+
+    // Special handling for toLocaleString errors
+    if (error.message.includes('toLocaleString')) {
+      console.error('🐛 toLocaleString error detected!');
+      console.error('Error stack:', error.stack);
+      console.error('Component stack:', errorInfo.componentStack);
+
+      // Try to identify the problematic data
+      console.error('This error usually happens when undefined/null values are passed to toLocaleString()');
+      console.error('Check for undefined timestamps, numbers, or dates in the component that crashed');
+    }
   }
 
   handleReset = () => {
