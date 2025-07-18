@@ -138,22 +138,9 @@ export const redirectToCorrectPortal = (user: any): void => {
 /**
  * Handle admin portal access attempt
  */
-export const handleAdminPortalAccess = (user: any): void => {
-  if (!user) {
-    // Not signed in, redirect to admin portal login page
-    window.location.href = `${PORTAL_URLS.ADMIN}/sign-in`;
-    return;
-  }
-
-  const userRole = getUserRole(user);
-
-  if (isAdmin(userRole)) {
-    // Admin user, redirect to admin portal dashboard
-    navigateToAdminPortal(user, '/dashboard');
-  } else {
-    // Non-admin user, redirect to admin portal login page
-    window.location.href = `${PORTAL_URLS.ADMIN}/sign-in`;
-  }
+export const handleAdminPortalAccess = (_user?: any): void => {
+  // Simple solution: redirect to admin sign-in page within the same app
+  window.location.href = '/admin/sign-in';
 };
 
 /**

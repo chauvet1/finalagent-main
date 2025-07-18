@@ -37,6 +37,7 @@ import NotificationsPage from './pages/NotificationsPage';
 import HomePage from './pages/landing/HomePage';
 import ClientLoginPage from './pages/landing/ClientLoginPage';
 import ClientSignupPage from './pages/landing/ClientSignupPage';
+import AdminSignInPage from './pages/admin/AdminSignInPage';
 
 const theme = createTheme({
   palette: {
@@ -178,6 +179,8 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/client/login" element={<ClientLoginPage />} />
         <Route path="/client/signup" element={<ClientSignupPage />} />
+        <Route path="/admin/sign-in" element={<AdminSignInPage />} />
+        <Route path="/admin/*" element={<AdminSignInPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
