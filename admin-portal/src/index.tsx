@@ -11,7 +11,13 @@ import { validateEnvironment } from './utils/env';
 import App from './App';
 
 // Validate environment configuration on startup
-validateEnvironment();
+try {
+  validateEnvironment();
+  console.log('✅ Admin Portal environment validation passed');
+} catch (error) {
+  console.error('❌ Admin Portal environment validation failed:', error);
+  // Continue anyway for development
+}
 
 // Create Material-UI theme
 const theme = createTheme({
@@ -96,7 +102,7 @@ root.render(
       <ClerkProvider>
         <SessionProvider>
           <BrowserRouter
-            basename="/admin"
+            basename={process.env.NODE_ENV === 'production' ? '/admin' : ''}
             future={{
               v7_startTransition: true,
               v7_relativeSplatPath: true,

@@ -18,18 +18,21 @@ export const ClerkProvider: React.FC<ClerkProviderProps> = ({ children }) => {
     );
   }
 
+  // Determine if we need admin prefix based on environment
+  const needsAdminPrefix = process.env.NODE_ENV === 'production';
+
   return (
     <BaseClerkProvider
       publishableKey={ENV.clerk.publishableKey}
       routerPush={(to: string) => {
-        // Ensure all Clerk navigation respects the /admin basename
-        const adminPath = to.startsWith('/admin') ? to : `/admin${to}`;
-        window.history.pushState({}, '', adminPath);
+        // Add /admin prefix only in production
+        const finalPath = needsAdminPrefix && !to.startsWith('/admin') ? `/admin${to}` : to;
+        window.history.pushState({}, '', finalPath);
       }}
       routerReplace={(to: string) => {
-        // Ensure all Clerk navigation respects the /admin basename
-        const adminPath = to.startsWith('/admin') ? to : `/admin${to}`;
-        window.history.replaceState({}, '', adminPath);
+        // Add /admin prefix only in production
+        const finalPath = needsAdminPrefix && !to.startsWith('/admin') ? `/admin${to}` : to;
+        window.history.replaceState({}, '', finalPath);
       }}
     >
       {children}
