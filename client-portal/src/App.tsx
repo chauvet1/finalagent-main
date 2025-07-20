@@ -16,7 +16,7 @@ import { NotificationProvider } from './providers/NotificationProvider';
 import './utils/environmentTest';
 
 // Global fixes for common JavaScript errors (must be imported early)
-import './utils/globalFixes';
+
 
 // Components
 import Sidebar from './components/layout/Sidebar';

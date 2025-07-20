@@ -9,6 +9,7 @@ interface AuthenticatedUser {
     lastName?: string;
     role: UserRole;
     status: UserStatus;
+    clientId?: string;
     permissions?: string[];
     accessLevel?: string;
     profileData?: {

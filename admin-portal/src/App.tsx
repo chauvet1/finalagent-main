@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Global fixes for common JavaScript errors (must be imported early)
-import './utils/globalFixes';
+
 import {
   Box,
   Typography,

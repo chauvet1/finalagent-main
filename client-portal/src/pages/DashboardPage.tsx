@@ -136,8 +136,8 @@ const DashboardPage: React.FC = () => {
               id: report.id,
               type: 'REPORT' as const,
               title: report.title,
-              description: `Report by ${report.agentName} at ${report.siteName}`,
-              timestamp: report.createdAt
+              description: `Report by ${report.agent?.name || 'Unknown Agent'} at ${report.site?.name || 'Unknown Site'}`,
+              timestamp: report.timestamp || report.createdAt || new Date().toISOString()
             }))
           );
         }
@@ -149,8 +149,8 @@ const DashboardPage: React.FC = () => {
               id: incident.id,
               type: 'INCIDENT' as const,
               title: incident.title,
-              description: `${incident.severity} incident reported by ${incident.reportedBy} at ${incident.siteName}`,
-              timestamp: incident.occurredAt
+              description: `${incident.severity} incident reported by ${incident.reporter?.firstName} ${incident.reporter?.lastName} at ${incident.site?.name}`,
+              timestamp: incident.timestamp || incident.occurredAt || new Date().toISOString()
             }))
           );
         }
@@ -160,17 +160,23 @@ const DashboardPage: React.FC = () => {
           combinedActivity = combinedActivity.concat(
             activityData.recentAttendance.map((attendance: any) => ({
               id: attendance.id,
-              type: attendance.clockOutTime ? 'SHIFT_END' as const : 'SHIFT_START' as const,
-              title: attendance.clockOutTime ? 'Shift Ended' : 'Shift Started',
-              description: `${attendance.agentName} at ${attendance.siteName}`,
-              timestamp: attendance.clockOutTime || attendance.clockInTime
+              type: attendance.endTime ? 'SHIFT_END' as const : 'SHIFT_START' as const,
+              title: attendance.endTime ? 'Shift Ended' : 'Shift Started',
+              description: `${attendance.agent?.name || 'Unknown Agent'} at ${attendance.site?.name || 'Unknown Site'}`,
+              timestamp: attendance.timestamp || attendance.endTime || attendance.startTime || new Date().toISOString()
             }))
           );
         }
       }
 
-      // Sort by timestamp (most recent first)
-      combinedActivity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      // Sort by timestamp (most recent first) with safe date parsing
+      combinedActivity.sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+        const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+        return timeB - timeA;
+      });
 
       console.log('Combined activity array:', combinedActivity);
       setRecentActivity(combinedActivity);
@@ -186,8 +192,8 @@ const DashboardPage: React.FC = () => {
           id: site.id,
           name: site.name,
           status: site.status,
-          agentsOnDuty: site.activeShifts || site.activeAgents?.length || 0,
-          lastActivity: new Date().toISOString(), // Use current time as fallback
+          agentsOnDuty: site.agentsOnSite || site.activeShifts || site.activeAgents?.length || 0,
+          lastActivity: site.lastUpdate || site.timestamp || new Date().toISOString(),
           incidentCount: site.openIncidents || 0
         }));
       }

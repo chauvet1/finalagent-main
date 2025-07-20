@@ -32,14 +32,7 @@ const AlertsCard: React.FC<AlertsCardProps> = ({ alerts }) => (
                 <>
                   <Typography variant="body2">{alert.message}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {alert.timestamp ? (() => {
-                      try {
-                        const date = new Date(alert.timestamp);
-                        return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
-                      } catch (error) {
-                        return 'Invalid Date';
-                      }
-                    })() : 'N/A'} | Priority: {alert.priority || 'N/A'}
+                    {new Date(alert.timestamp).toLocaleString()} | Priority: {alert.priority}
                   </Typography>
                 </>
               }
