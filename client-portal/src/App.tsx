@@ -15,6 +15,9 @@ import { NotificationProvider } from './providers/NotificationProvider';
 // Environment configuration test (runs automatically in development)
 import './utils/environmentTest';
 
+// Global fixes for common JavaScript errors (must be imported early)
+import './utils/globalFixes';
+
 // Components
 import Sidebar from './components/layout/Sidebar';
 
@@ -38,6 +41,7 @@ import HomePage from './pages/landing/HomePage';
 import ClientLoginPage from './pages/landing/ClientLoginPage';
 import ClientSignupPage from './pages/landing/ClientSignupPage';
 import AdminSignInPage from './pages/admin/AdminSignInPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 
 const theme = createTheme({
   palette: {
@@ -138,6 +142,7 @@ const AuthenticatedApp: React.FC = () => {
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
               <Route path="/monitoring" element={<LiveMonitoringPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/reports/analytics" element={<AnalyticsPage />} />

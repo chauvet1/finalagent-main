@@ -30,6 +30,8 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { clientPortalAPI } from '../services/api';
+import { getUserRole, isAdmin } from '../utils/roleUtils';
+import { useUser } from '@clerk/clerk-react';
 
 interface DashboardStats {
   activeSites: number;
@@ -66,6 +68,11 @@ interface SiteStatus {
 
 const DashboardPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const { user } = useUser();
+
+  // Check if current user is admin
+  const userRole = getUserRole(user);
+  const isAdminUser = isAdmin(userRole);
 
   // State management
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -299,11 +306,21 @@ const DashboardPage: React.FC = () => {
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Box>
-          <Typography variant="h4" gutterBottom>
-            Security Dashboard
-          </Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="h4" gutterBottom>
+              Security Dashboard
+            </Typography>
+            {isAdminUser && (
+              <Chip
+                label="Admin View"
+                color="primary"
+                size="small"
+                sx={{ fontWeight: 'bold' }}
+              />
+            )}
+          </Box>
           <Typography variant="body1" color="text.secondary">
-            Real-time monitoring and security oversight
+            {isAdminUser ? 'Administrator dashboard with full system access' : 'Real-time monitoring and security oversight'}
           </Typography>
         </Box>
         <Box display="flex" gap={2} alignItems="center">

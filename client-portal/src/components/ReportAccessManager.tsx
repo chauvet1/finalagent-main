@@ -234,7 +234,14 @@ const getUniqueValues = (field: keyof Report) => {
                 {report.title}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                {report.siteName} • {new Date(report.createdAt).toLocaleDateString()}
+                {report.siteName} • {report.createdAt ? (() => {
+                  try {
+                    const date = new Date(report.createdAt);
+                    return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleDateString();
+                  } catch (error) {
+                    return 'Invalid Date';
+                  }
+                })() : 'N/A'}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                 <Chip

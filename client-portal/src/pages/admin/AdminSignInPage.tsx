@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import {
@@ -9,10 +9,13 @@ import {
   Typography,
   Button,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Divider
 } from '@mui/material';
 import { SignIn } from '@clerk/clerk-react';
-import { getUserRole, isAdmin } from '../../utils/roleUtils';
+import { getUserRole, isAdmin, debugUserRole } from '../../utils/roleUtils';
+import { autoAssignAdminRole, isDevAdminEmail } from '../../utils/adminSetup';
+import AdminSetupPanel from '../../components/dev/AdminSetupPanel';
 
 /**
  * Admin Sign In Page
@@ -22,22 +25,42 @@ const AdminSignInPage: React.FC = () => {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded } = useAuth();
   const { user } = useUser();
+  const [autoAssignAttempted, setAutoAssignAttempted] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && user) {
-      const userRole = getUserRole(user);
-      console.log('Admin sign-in - checking user role:', userRole);
+    const handleAdminAuth = async () => {
+      if (isLoaded && isSignedIn && user) {
+        console.log('🔍 Admin sign-in - checking user authentication');
+        debugUserRole(user);
 
-      if (isAdmin(userRole)) {
-        // Admin user - redirect to admin dashboard
-        console.log('✅ Admin user authenticated, redirecting to dashboard');
-        navigate('/dashboard'); // For now, use the same dashboard
-      } else {
-        // Non-admin user
-        console.log('❌ Access denied - user does not have admin role:', userRole);
+        // Try auto-assignment for dev admin emails
+        if (!autoAssignAttempted && isDevAdminEmail(user.primaryEmailAddress?.emailAddress)) {
+          console.log('🔧 Attempting auto-assignment for dev admin email');
+          setAutoAssignAttempted(true);
+          await autoAssignAdminRole(user);
+          // Wait a moment for the role to be updated
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          return;
+        }
+
+        const userRole = getUserRole(user);
+        console.log('Admin sign-in - checking user role:', userRole);
+
+        if (isAdmin(userRole)) {
+          // Admin user - redirect to admin dashboard
+          console.log('✅ Admin user authenticated, redirecting to admin dashboard');
+          navigate('/admin/dashboard');
+        } else {
+          // Non-admin user
+          console.log('❌ Access denied - user does not have admin role:', userRole);
+        }
       }
-    }
-  }, [isLoaded, isSignedIn, user, navigate]);
+    };
+
+    handleAdminAuth();
+  }, [isLoaded, isSignedIn, user, navigate, autoAssignAttempted]);
 
   const handleBackToHome = () => {
     navigate('/');
@@ -94,6 +117,14 @@ const AdminSignInPage: React.FC = () => {
                 Sign in with your administrator account
               </Typography>
             </Box>
+
+            {/* Development Admin Setup Panel */}
+            {process.env.NODE_ENV === 'development' && isSignedIn && (
+              <>
+                <AdminSetupPanel />
+                <Divider sx={{ my: 3 }} />
+              </>
+            )}
 
             {!isSignedIn ? (
               <Box>

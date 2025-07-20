@@ -24,14 +24,32 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     console.error('Error caught by boundary:', error, errorInfo);
 
     // Special handling for toLocaleString errors
-    if (error.message.includes('toLocaleString')) {
+    if (error.message.includes('toLocaleString') || error.message.includes('Cannot read properties of undefined')) {
       console.error('🐛 toLocaleString error detected!');
       console.error('Error stack:', error.stack);
       console.error('Component stack:', errorInfo.componentStack);
-
-      // Try to identify the problematic data
       console.error('This error usually happens when undefined/null values are passed to toLocaleString()');
       console.error('Check for undefined timestamps, numbers, or dates in the component that crashed');
+
+      // Log additional debugging information
+      console.error('Common causes:');
+      console.error('1. API response contains null/undefined timestamp fields');
+      console.error('2. Date objects created from invalid date strings');
+      console.error('3. Number formatting on undefined/null values');
+      console.error('4. Missing null checks before calling toLocaleString()');
+    }
+
+    // Log error to external service in production
+    if (process.env.NODE_ENV === 'production') {
+      // TODO: Send error to logging service
+      console.error('Production error logged:', {
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+      });
     }
   }
 
