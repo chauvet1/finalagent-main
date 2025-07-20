@@ -112,22 +112,26 @@ const AuthenticatedApp: React.FC = () => {
     <SocketProvider>
       <NotificationProvider>
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          <Sidebar open={sidebarOpen} onToggle={handleSidebarToggle} />
+          <Sidebar
+            open={sidebarOpen}
+            onToggle={handleSidebarToggle}
+            isMobile={isMobile}
+          />
           <Box
             component="main"
             sx={{
               flexGrow: 1,
-              p: { xs: 2, sm: 3, md: 4 },
+              p: isMobile ? 1 : { xs: 2, sm: 3, md: 4 },
               marginLeft: {
                 xs: 0,
-                md: sidebarOpen ? '240px' : 0
+                md: sidebarOpen && !isMobile ? '240px' : 0
               },
               backgroundColor: '#f5f5f5',
               minHeight: '100vh',
               transition: 'margin-left 0.3s ease-in-out',
               width: {
                 xs: '100%',
-                md: sidebarOpen ? 'calc(100% - 240px)' : '100%'
+                md: sidebarOpen && !isMobile ? 'calc(100% - 240px)' : '100%'
               }
             }}
           >

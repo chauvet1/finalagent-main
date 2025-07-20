@@ -40,7 +40,6 @@ import {
 import {
   Refresh as RefreshIcon,
   Search as SearchIcon,
-  FilterList as FilterIcon,
   GetApp as ExportIcon,
   Visibility as ViewIcon,
   Security as SecurityIcon,

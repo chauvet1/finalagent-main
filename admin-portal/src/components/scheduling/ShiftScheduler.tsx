@@ -15,21 +15,11 @@ import {
   Select,
   MenuItem,
   Grid,
-  Chip,
   Alert,
   CircularProgress,
-  IconButton,
-  Tooltip,
-  Paper,
 } from '@mui/material';
 import {
   Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  CalendarToday as CalendarIcon,
-  Person as PersonIcon,
-  Business as BusinessIcon,
-  Schedule as ScheduleIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -39,7 +29,7 @@ import { Calendar, momentLocalizer, Event } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useAuth } from '../../hooks/useAuth';
-import { isAuthenticationAvailable, getCurrentTokenInfo, adminAPI, sitesAPI, agentsAPI, shiftsAPI } from '../../services/api';
+import { isAuthenticationAvailable, getCurrentTokenInfo, sitesAPI, agentsAPI, shiftsAPI } from '../../services/api';
 
 const localizer = momentLocalizer(moment);
 
@@ -92,7 +82,6 @@ interface ShiftFormData {
 }
 
 const ShiftScheduler: React.FC = () => {
-  const { user } = useAuth();
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [agents, setAgents] = useState<Agent[]>([]);
   const [sites, setSites] = useState<Site[]>([]);

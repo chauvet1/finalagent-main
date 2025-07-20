@@ -62,17 +62,10 @@ interface SiteStatus {
   incidentCount: number;
 }
 
-// interface AgentStatus {
-//   id: string;
-//   name: string;
-//   status: 'ON_DUTY' | 'OFF_DUTY' | 'BREAK' | 'EMERGENCY';
-//   currentSite?: string;
-//   shiftStart?: string;
-//   lastActivity: string;
-// }
+
 
 const DashboardPage: React.FC = () => {
-  const { isAuthenticated, getToken, getTokenType } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // State management
   const [stats, setStats] = useState<DashboardStats | null>(null);

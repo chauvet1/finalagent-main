@@ -9,13 +9,11 @@ import {
   IconButton,
   Tooltip,
   Alert,
-  CircularProgress,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   TextField,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -33,32 +31,13 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  Divider,
-  Switch,
-  FormControlLabel,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   LinearProgress,
-  FormGroup,
-  Checkbox,
-  RadioGroup,
-  Radio,
-  FormLabel,
-  InputAdornment,
-  Badge,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
   Refresh as RefreshIcon,
-  Security as SecurityIcon,
-  Shield as ShieldIcon,
-  Assignment as AssignmentIcon,
   CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon,
-  Error as ErrorIcon,
   Schedule as ScheduleIcon,
   Assessment as AssessmentIcon,
   Visibility as VisibilityIcon,
@@ -184,7 +163,6 @@ interface ComplianceReport {
 // Compliance reports will be loaded from API
 
 const ComplianceManagementPage: React.FC = () => {
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);

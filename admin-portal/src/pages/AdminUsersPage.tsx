@@ -26,9 +26,7 @@ import {
   Snackbar
 } from '@mui/material';
 import {
-  Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
   PersonAdd as PersonAddIcon,
   TrendingUp as PromoteIcon
 } from '@mui/icons-material';
@@ -68,7 +66,6 @@ interface PromoteUserForm {
 }
 
 const AdminUsersPage: React.FC = () => {
-  const { user } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);

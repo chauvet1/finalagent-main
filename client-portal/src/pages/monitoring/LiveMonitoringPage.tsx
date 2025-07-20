@@ -141,16 +141,21 @@ const LiveMonitoringPage: React.FC = () => {
         });
 
         setSocket(newSocket);
-
-        return () => {
-          newSocket.disconnect();
-        };
       } catch (error) {
         console.error('Failed to initialize socket connection:', error);
+        setError('Failed to initialize real-time monitoring. Please refresh the page.');
       }
     };
 
     initializeSocket();
+
+    // Cleanup function for useEffect
+    return () => {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
+    };
   }, [user?.id]);
 
   const loadMonitoringData = useCallback(async () => {

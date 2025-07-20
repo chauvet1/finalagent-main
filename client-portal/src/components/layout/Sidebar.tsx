@@ -43,6 +43,7 @@ import { useAuth, useUser } from '@clerk/clerk-react';
 interface SidebarProps {
   open: boolean;
   onToggle: () => void;
+  isMobile?: boolean;
 }
 
 interface MenuItemType {
@@ -52,7 +53,7 @@ interface MenuItemType {
   subItems?: MenuItemType[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ open }) => {
+const Sidebar: React.FC<SidebarProps> = ({ open, isMobile = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
@@ -160,12 +161,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
 
   return (
     <Drawer
-      variant="permanent"
+      variant={isMobile ? "temporary" : "permanent"}
+      open={open}
+      onClose={isMobile ? () => {} : undefined}
       sx={{
-        width: open ? drawerWidth : collapsedWidth,
+        width: open ? drawerWidth : (isMobile ? 0 : collapsedWidth),
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: open ? drawerWidth : collapsedWidth,
+          width: open ? drawerWidth : (isMobile ? drawerWidth : collapsedWidth),
           boxSizing: 'border-box',
           transition: 'width 0.3s ease',
           overflowX: 'hidden',

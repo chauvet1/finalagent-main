@@ -506,6 +506,137 @@ const BillingPage: React.FC = () => {
           )}
         </TabPanel>
       </Paper>
+
+      {/* Invoice Details Dialog */}
+      <Dialog
+        open={invoiceDialogOpen}
+        onClose={() => setInvoiceDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="h6">
+              Invoice Details - {selectedInvoice?.invoiceNumber}
+            </Typography>
+            <Chip
+              label={selectedInvoice?.status}
+              color={
+                selectedInvoice?.status === 'PAID' ? 'success' :
+                selectedInvoice?.status === 'OVERDUE' ? 'error' : 'warning'
+              }
+              size="small"
+            />
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {selectedInvoice && (
+            <Box sx={{ mt: 2 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Invoice Number
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {selectedInvoice.invoiceNumber}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Amount
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {formatCurrency(selectedInvoice.amount)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Issue Date
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {formatDate(selectedInvoice.issueDate)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Due Date
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {formatDate(selectedInvoice.dueDate)}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Description
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {selectedInvoice.description || 'Security services for the billing period'}
+                  </Typography>
+                </Grid>
+                {selectedInvoice.lineItems && selectedInvoice.lineItems.length > 0 && (
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                      Line Items
+                    </Typography>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Description</TableCell>
+                          <TableCell align="right">Quantity</TableCell>
+                          <TableCell align="right">Unit Price</TableCell>
+                          <TableCell align="right">Total</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {selectedInvoice.lineItems.map((item, index) => (
+                          <TableRow key={item.id || index}>
+                            <TableCell>{item.description}</TableCell>
+                            <TableCell align="right">{item.quantity}</TableCell>
+                            <TableCell align="right">{formatCurrency(item.unitPrice)}</TableCell>
+                            <TableCell align="right">{formatCurrency(item.totalPrice)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Grid>
+                )}
+              </Grid>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setInvoiceDialogOpen(false)}>
+            Close
+          </Button>
+          {selectedInvoice && (
+            <Button
+              variant="contained"
+              startIcon={<DownloadIcon />}
+              onClick={() => {
+                // Implement download functionality with real API call
+                clientPortalAPI.downloadInvoice(selectedInvoice.id)
+                  .then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `invoice-${selectedInvoice.invoiceNumber}.pdf`);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
+                  })
+                  .catch((error) => {
+                    console.error('Failed to download invoice:', error);
+                    setError('Failed to download invoice. Please try again.');
+                  });
+              }}
+            >
+              Download PDF
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

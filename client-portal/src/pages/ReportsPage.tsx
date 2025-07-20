@@ -8,6 +8,23 @@ import {
   Button,
   Alert,
   CircularProgress,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  Paper,
+  Chip,
+  IconButton,
+  Tooltip,
+  InputAdornment,
 } from '@mui/material';
 import {
   Refresh as RefreshIcon,
@@ -16,6 +33,16 @@ import {
   Security as SecurityIcon,
   Warning as IncidentIcon,
   Schedule as ScheduleIcon,
+  Search as SearchIcon,
+  FilterList as FilterIcon,
+  Visibility as ViewIcon,
+  Edit as EditIcon,
+  LocationOn as LocationIcon,
+  Person as PersonIcon,
+  AccessTime as TimeIcon,
+  CheckCircle as ApprovedIcon,
+  Cancel as RejectedIcon,
+  HourglassEmpty as PendingIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { isAuthenticationAvailable, getCurrentTokenInfo, clientAPI } from '../services/api';
@@ -75,6 +102,7 @@ const ReportsPage: React.FC = () => {
   // State management
   const [reports, setReports] = useState<Report[]>([]);
   const [stats, setStats] = useState<ReportStats | null>(null);
+  const [sites, setSites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
@@ -87,6 +115,16 @@ const ReportsPage: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Data fetching functions
+  const fetchSites = useCallback(async () => {
+    try {
+      const response = await clientAPI.getSites();
+      setSites(response.data || []);
+    } catch (err) {
+      console.error('Failed to fetch sites:', err);
+      // Don't set error for sites as it's not critical
+    }
+  }, []);
+
   const fetchReports = useCallback(async () => {
     // Check authentication availability first
     const authAvailable = await isAuthenticationAvailable();
@@ -104,8 +142,18 @@ const ReportsPage: React.FC = () => {
       const tokenInfo = await getCurrentTokenInfo();
       console.debug(`Loading client reports with ${tokenInfo?.type || 'unknown'} token`);
 
+      const params = {
+        page: page.toString(),
+        limit: rowsPerPage.toString(),
+        type: filterType !== 'all' ? filterType : undefined,
+        status: filterStatus !== 'all' ? filterStatus : undefined,
+        priority: filterPriority !== 'all' ? filterPriority : undefined,
+        site: filterSite !== 'all' ? filterSite : undefined,
+        search: searchQuery || undefined,
+      };
+
       // Use the enhanced client API service
-      const reportsResponse = await clientAPI.getReports();
+      const reportsResponse = await clientAPI.getReports(params);
       
       // For stats, we'll simulate the data since there's no specific stats endpoint
       const mockStats = {
@@ -237,8 +285,9 @@ const ReportsPage: React.FC = () => {
 
   // Effects
   useEffect(() => {
+    fetchSites();
     fetchReports();
-  }, [fetchReports]);
+  }, [fetchSites, fetchReports]);
 
   // Loading state
   if (loading && reports.length === 0) {
@@ -361,6 +410,274 @@ const ReportsPage: React.FC = () => {
           </Grid>
         </Grid>
       )}
+
+      {/* Filters and Search */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <FilterIcon color="primary" />
+            <Typography variant="h6">Filters</Typography>
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="Search reports"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                placeholder="Search by title, description, or agent..."
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Type</InputLabel>
+                <Select
+                  value={filterType}
+                  label="Type"
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <MenuItem value="all">All Types</MenuItem>
+                  <MenuItem value="INCIDENT">Incident</MenuItem>
+                  <MenuItem value="PATROL">Patrol</MenuItem>
+                  <MenuItem value="MAINTENANCE">Maintenance</MenuItem>
+                  <MenuItem value="SECURITY">Security</MenuItem>
+                  <MenuItem value="GENERAL">General</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={filterStatus}
+                  label="Status"
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <MenuItem value="all">All Status</MenuItem>
+                  <MenuItem value="DRAFT">Draft</MenuItem>
+                  <MenuItem value="SUBMITTED">Submitted</MenuItem>
+                  <MenuItem value="REVIEWED">Reviewed</MenuItem>
+                  <MenuItem value="APPROVED">Approved</MenuItem>
+                  <MenuItem value="REJECTED">Rejected</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Priority</InputLabel>
+                <Select
+                  value={filterPriority}
+                  label="Priority"
+                  onChange={(e) => setFilterPriority(e.target.value)}
+                >
+                  <MenuItem value="all">All Priority</MenuItem>
+                  <MenuItem value="LOW">Low</MenuItem>
+                  <MenuItem value="MEDIUM">Medium</MenuItem>
+                  <MenuItem value="HIGH">High</MenuItem>
+                  <MenuItem value="CRITICAL">Critical</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Site</InputLabel>
+                <Select
+                  value={filterSite}
+                  label="Site"
+                  onChange={(e) => setFilterSite(e.target.value)}
+                >
+                  <MenuItem value="all">All Sites</MenuItem>
+                  {sites.map((site) => (
+                    <MenuItem key={site.id} value={site.id}>
+                      {site.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
+      {/* Reports Table */}
+      <Card>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="h6">Reports</Typography>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                {reports.length} reports found
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<ExportIcon />}
+                onClick={exportReports}
+                disabled={loading || reports.length === 0}
+                size="small"
+              >
+                Export
+              </Button>
+            </Box>
+          </Box>
+
+          {loading && reports.length === 0 ? (
+            <Box display="flex" justifyContent="center" py={4}>
+              <CircularProgress />
+            </Box>
+          ) : reports.length === 0 ? (
+            <Box textAlign="center" py={4}>
+              <ReportIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+              <Typography variant="h6" color="text.secondary">
+                No reports found
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Try adjusting your filters or search criteria
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <TableContainer component={Paper} variant="outlined">
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Title</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Priority</TableCell>
+                      <TableCell>Agent</TableCell>
+                      <TableCell>Site</TableCell>
+                      <TableCell>Date</TableCell>
+                      <TableCell align="center">Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {reports.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((report) => (
+                      <TableRow key={report.id} hover>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <ReportIcon color="primary" fontSize="small" />
+                            <Typography variant="body2">
+                              {report.type}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight="medium">
+                            {report.title}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {report.description.substring(0, 50)}...
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={report.status}
+                            size="small"
+                            color={
+                              report.status === 'APPROVED' ? 'success' :
+                              report.status === 'REJECTED' ? 'error' :
+                              report.status === 'REVIEWED' ? 'info' :
+                              report.status === 'SUBMITTED' ? 'warning' : 'default'
+                            }
+                            icon={
+                              report.status === 'APPROVED' ? <ApprovedIcon /> :
+                              report.status === 'REJECTED' ? <RejectedIcon /> :
+                              report.status === 'SUBMITTED' || report.status === 'REVIEWED' ? <PendingIcon /> : undefined
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={report.priority}
+                            size="small"
+                            color={
+                              report.priority === 'CRITICAL' ? 'error' :
+                              report.priority === 'HIGH' ? 'warning' :
+                              report.priority === 'MEDIUM' ? 'info' : 'default'
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <PersonIcon fontSize="small" color="action" />
+                            <Typography variant="body2">
+                              {report.agent.user.firstName} {report.agent.user.lastName}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <LocationIcon fontSize="small" color="action" />
+                            <Typography variant="body2">
+                              {report.site.name}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <TimeIcon fontSize="small" color="action" />
+                            <Typography variant="body2">
+                              {new Date(report.timestamp).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Tooltip title="View Report">
+                              <IconButton
+                                size="small"
+                                onClick={() => {
+                                  // TODO: Implement report details dialog
+                                  console.log('View report:', report.id);
+                                }}
+                              >
+                                <ViewIcon />
+                              </IconButton>
+                            </Tooltip>
+                            {(report.status === 'DRAFT' || report.status === 'SUBMITTED') && (
+                              <Tooltip title="Edit Report">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => {
+                                    // TODO: Implement report editing
+                                    console.log('Edit report:', report.id);
+                                  }}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <TablePagination
+                component="div"
+                count={reports.length}
+                page={page}
+                onPageChange={(_, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+              />
+            </>
+          )}
+        </CardContent>
+      </Card>
     </Box>
   );
 };

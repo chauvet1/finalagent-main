@@ -25,6 +25,19 @@ import {
   Business as ClientIcon,
   PersonAdd as SignupIcon,
   Person as PersonIcon,
+  TrendingUp as TrendingUpIcon,
+  Groups as GroupsIcon,
+  Schedule as ScheduleIcon,
+  CheckCircle as CheckCircleIcon,
+  Star as StarIcon,
+  CloudDone as CloudIcon,
+  Speed as SpeedIcon,
+  Shield as ShieldIcon,
+  PhoneAndroid as MobileIcon,
+  Analytics as AnalyticsIcon,
+  Assignment as AssignmentIcon,
+  Timeline as TimelineIcon,
+  PlayArrow as PlayIcon,
 } from '@mui/icons-material';
 import {
   getUserRole,
@@ -240,6 +253,156 @@ const HomePage: React.FC = () => {
         </Grid>
       </Container>
 
+      {/* Statistics Section */}
+      <Box sx={{ backgroundColor: 'primary.main', color: 'white', py: 8 }}>
+        <Container maxWidth="lg">
+          <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ mb: 6 }}>
+            Trusted by Security Leaders
+          </Typography>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={6} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  500+
+                </Typography>
+                <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                  Security Guards
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.7, mt: 1 }}>
+                  Actively managed
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  150+
+                </Typography>
+                <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                  Client Sites
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.7, mt: 1 }}>
+                  Under protection
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  99.9%
+                </Typography>
+                <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                  Uptime
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.7, mt: 1 }}>
+                  System reliability
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  24/7
+                </Typography>
+                <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                  Monitoring
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.7, mt: 1 }}>
+                  Round-the-clock
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* How It Works Section */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ mb: 6 }}>
+          How BahinLink Works
+        </Typography>
+        <Grid container spacing={4} alignItems="center">
+          <Grid item xs={12} md={4}>
+            <Box textAlign="center" sx={{ p: 3 }}>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mx: 'auto',
+                  mb: 3,
+                }}
+              >
+                <AssignmentIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                1. Setup & Configure
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Quick onboarding process to configure your sites, security zones, and team structure.
+                Our experts help you get started in minutes.
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box textAlign="center" sx={{ p: 3 }}>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mx: 'auto',
+                  mb: 3,
+                }}
+              >
+                <PlayIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                2. Deploy & Monitor
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Deploy security personnel with real-time tracking, automated check-ins,
+                and instant incident reporting capabilities.
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box textAlign="center" sx={{ p: 3 }}>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mx: 'auto',
+                  mb: 3,
+                }}
+              >
+                <AnalyticsIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                3. Analyze & Optimize
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Generate comprehensive reports, analyze performance metrics,
+                and continuously optimize your security operations.
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+
       {/* Authentication Status Debug Section */}
       {isSignedIn && user && (
         <Box sx={{ backgroundColor: 'info.light', py: 4 }}>
@@ -263,83 +426,433 @@ const HomePage: React.FC = () => {
         </Box>
       )}
 
-      {/* Client Access Section */}
+      {/* Technology Stack Section */}
       <Box sx={{ backgroundColor: 'grey.50', py: 8 }}>
-        <Container maxWidth="md">
-          <Typography variant="h4" component="h2" textAlign="center" gutterBottom>
-            New Client?
+        <Container maxWidth="lg">
+          <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ mb: 6 }}>
+            Built with Modern Technology
           </Typography>
-          <Typography variant="h6" textAlign="center" color="text.secondary" paragraph>
-            Join BahinLink to get real-time visibility into your security services
-          </Typography>
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<SignupIcon />}
-              onClick={handleClientSignup}
-              sx={{ py: 1.5, px: 4, mr: 2 }}
-            >
-              Create Client Account
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              startIcon={<ClientIcon />}
-              onClick={handleClientLogin}
-              sx={{ py: 1.5, px: 4 }}
-            >
-              Existing Client Login
-            </Button>
-          </Box>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ height: '100%', textAlign: 'center', p: 3 }}>
+                <CloudIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                <Typography variant="h6" gutterBottom>
+                  Cloud-Native
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Scalable cloud infrastructure ensuring 99.9% uptime and global accessibility
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ height: '100%', textAlign: 'center', p: 3 }}>
+                <MobileIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                <Typography variant="h6" gutterBottom>
+                  Mobile-First
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Responsive design optimized for mobile devices and field operations
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ height: '100%', textAlign: 'center', p: 3 }}>
+                <SpeedIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                <Typography variant="h6" gutterBottom>
+                  Real-Time
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Instant updates and live tracking with WebSocket technology
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card elevation={2} sx={{ height: '100%', textAlign: 'center', p: 3 }}>
+                <ShieldIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                <Typography variant="h6" gutterBottom>
+                  Enterprise Security
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Bank-grade encryption and compliance with international standards
+                </Typography>
+              </Card>
+            </Grid>
+          </Grid>
         </Container>
       </Box>
 
+      {/* Testimonials Section */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ mb: 6 }}>
+          What Our Clients Say
+        </Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={4}>
+            <Card elevation={2} sx={{ height: '100%', p: 3 }}>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarIcon key={star} sx={{ color: '#ffc107', fontSize: 20 }} />
+                ))}
+              </Box>
+              <Typography variant="body1" paragraph sx={{ fontStyle: 'italic' }}>
+                "BahinLink has revolutionized how we manage our security operations.
+                The real-time tracking and automated reporting have saved us countless hours."
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.main',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mr: 2,
+                  }}
+                >
+                  <PersonIcon sx={{ color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                    Sarah Johnson
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Operations Manager, SecureGuard Ltd
+                  </Typography>
+                </Box>
+              </Box>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card elevation={2} sx={{ height: '100%', p: 3 }}>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarIcon key={star} sx={{ color: '#ffc107', fontSize: 20 }} />
+                ))}
+              </Box>
+              <Typography variant="body1" paragraph sx={{ fontStyle: 'italic' }}>
+                "The client portal gives us complete transparency into our security services.
+                We can see exactly what's happening at our facilities in real-time."
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.main',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mr: 2,
+                  }}
+                >
+                  <PersonIcon sx={{ color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                    Michael Chen
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Facility Director, TechCorp Industries
+                  </Typography>
+                </Box>
+              </Box>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card elevation={2} sx={{ height: '100%', p: 3 }}>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarIcon key={star} sx={{ color: '#ffc107', fontSize: 20 }} />
+                ))}
+              </Box>
+              <Typography variant="body1" paragraph sx={{ fontStyle: 'italic' }}>
+                "Implementation was seamless and the support team is exceptional.
+                BahinLink has become an essential part of our security infrastructure."
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.main',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mr: 2,
+                  }}
+                >
+                  <PersonIcon sx={{ color: 'white' }} />
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                    Emma Rodriguez
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Security Director, Metro Shopping Center
+                  </Typography>
+                </Box>
+              </Box>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+
+      {/* Enhanced Call-to-Action Section */}
+      <Box sx={{ backgroundColor: 'primary.main', color: 'white', py: 10 }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={6} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="h3" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                Ready to Transform Your Security Operations?
+              </Typography>
+              <Typography variant="h6" paragraph sx={{ opacity: 0.9, mb: 4 }}>
+                Join hundreds of security companies already using BahinLink to streamline
+                their operations, improve efficiency, and deliver better service to their clients.
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <CheckCircleIcon sx={{ mr: 2, color: 'white' }} />
+                <Typography variant="body1">Free 30-day trial</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <CheckCircleIcon sx={{ mr: 2, color: 'white' }} />
+                <Typography variant="body1">No setup fees</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+                <CheckCircleIcon sx={{ mr: 2, color: 'white' }} />
+                <Typography variant="body1">24/7 support included</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Paper elevation={8} sx={{ p: 4, textAlign: 'center' }}>
+                <Typography variant="h4" component="h3" gutterBottom color="primary.main" sx={{ fontWeight: 'bold' }}>
+                  Get Started Today
+                </Typography>
+                <Typography variant="body1" color="text.secondary" paragraph>
+                  Choose your access level and start experiencing the power of BahinLink
+                </Typography>
+                <Stack spacing={3} sx={{ mt: 4 }}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    startIcon={<SignupIcon />}
+                    onClick={handleClientSignup}
+                    sx={{ py: 2, fontSize: '1.1rem' }}
+                  >
+                    Create Client Account
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    fullWidth
+                    startIcon={<ClientIcon />}
+                    onClick={handleClientLogin}
+                    sx={{ py: 2, fontSize: '1.1rem' }}
+                  >
+                    Existing Client Login
+                  </Button>
+                  <Box sx={{ textAlign: 'center', pt: 2 }}>
+                    <Typography variant="caption" color="text.secondary">
+                      System administrators can access the{' '}
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={handleAdminLogin}
+                        sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
+                      >
+                        Admin Portal
+                      </Button>
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Key Features Highlight Section */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ mb: 6 }}>
+          Everything You Need in One Platform
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', p: 2 }}>
+              <TimelineIcon sx={{ color: 'primary.main', mr: 2, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Live Tracking
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Real-time GPS tracking of all security personnel with geofencing capabilities
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', p: 2 }}>
+              <ScheduleIcon sx={{ color: 'primary.main', mr: 2, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Smart Scheduling
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Automated shift scheduling with conflict detection and optimization
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', p: 2 }}>
+              <NotificationsIcon sx={{ color: 'primary.main', mr: 2, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Instant Alerts
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Immediate notifications for incidents, emergencies, and system events
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', p: 2 }}>
+              <AnalyticsIcon sx={{ color: 'primary.main', mr: 2, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Advanced Analytics
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Comprehensive reporting and performance analytics with custom dashboards
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', p: 2 }}>
+              <GroupsIcon sx={{ color: 'primary.main', mr: 2, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Team Management
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Complete workforce management with attendance tracking and performance metrics
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', p: 2 }}>
+              <MobileIcon sx={{ color: 'primary.main', mr: 2, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Mobile Ready
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Native mobile apps for iOS and Android with offline capabilities
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+
       {/* Footer */}
-      <Box sx={{ backgroundColor: 'grey.900', color: 'white', py: 6 }}>
+      <Box sx={{ backgroundColor: 'grey.900', color: 'white', py: 8 }}>
         <Container maxWidth="lg">
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                 <SecurityIcon sx={{ mr: 2, fontSize: 32 }} />
                 <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
                   BahinLink
                 </Typography>
               </Box>
-              <Typography variant="body2" color="grey.400">
+              <Typography variant="body2" color="grey.400" paragraph>
                 Empowering security companies with intelligent workforce management solutions.
+                Built by security professionals, for security professionals.
+              </Typography>
+              <Typography variant="body2" color="grey.400">
+                © 2024 Bahin SARL. All rights reserved.
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={6} md={2}>
               <Typography variant="h6" gutterBottom>
-                Quick Access
+                Platform
               </Typography>
               <Stack spacing={1}>
                 <Button
                   color="inherit"
                   onClick={handleAdminLogin}
-                  sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                  sx={{ justifyContent: 'flex-start', textTransform: 'none', color: 'grey.400' }}
                 >
                   Admin Dashboard
                 </Button>
                 <Button
                   color="inherit"
                   onClick={handleClientLogin}
-                  sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                  sx={{ justifyContent: 'flex-start', textTransform: 'none', color: 'grey.400' }}
                 >
                   Client Portal
                 </Button>
+                <Button
+                  color="inherit"
+                  onClick={handleClientSignup}
+                  sx={{ justifyContent: 'flex-start', textTransform: 'none', color: 'grey.400' }}
+                >
+                  Sign Up
+                </Button>
               </Stack>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={6} md={3}>
               <Typography variant="h6" gutterBottom>
-                Contact
+                Features
               </Typography>
-              <Typography variant="body2" color="grey.400">
-                For support and inquiries, please contact your system administrator.
+              <Stack spacing={1}>
+                <Typography variant="body2" color="grey.400">
+                  Live Tracking
+                </Typography>
+                <Typography variant="body2" color="grey.400">
+                  Smart Scheduling
+                </Typography>
+                <Typography variant="body2" color="grey.400">
+                  Incident Management
+                </Typography>
+                <Typography variant="body2" color="grey.400">
+                  Analytics & Reports
+                </Typography>
+                <Typography variant="body2" color="grey.400">
+                  Mobile Apps
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Typography variant="h6" gutterBottom>
+                Support
               </Typography>
+              <Typography variant="body2" color="grey.400" paragraph>
+                Need help? Our support team is available 24/7 to assist you.
+              </Typography>
+              <Typography variant="body2" color="grey.400" paragraph>
+                For technical support and inquiries, please contact your system administrator.
+              </Typography>
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="caption" color="grey.500">
+                  System Status: ✅ All systems operational
+                </Typography>
+              </Box>
             </Grid>
           </Grid>
+          <Box sx={{ borderTop: '1px solid', borderColor: 'grey.700', mt: 6, pt: 4, textAlign: 'center' }}>
+            <Typography variant="body2" color="grey.400">
+              BahinLink - Professional Security Workforce Management Platform
+            </Typography>
+          </Box>
         </Container>
       </Box>
     </Box>

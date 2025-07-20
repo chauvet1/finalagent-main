@@ -8,6 +8,23 @@ import {
   Button,
   Alert,
   CircularProgress,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  Paper,
+  Chip,
+  IconButton,
+  Tooltip,
+  InputAdornment,
 } from '@mui/material';
 import {
   Refresh as RefreshIcon,
@@ -16,6 +33,13 @@ import {
   ReportProblem as EmergencyIcon,
   CheckCircle as ResolvedIcon,
   Schedule as PendingIcon,
+  Search as SearchIcon,
+  FilterList as FilterIcon,
+  Visibility as ViewIcon,
+  Assignment as AssignmentIcon,
+  LocationOn as LocationIcon,
+  Person as PersonIcon,
+  AccessTime as TimeIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { isAuthenticationAvailable, getCurrentTokenInfo, clientAPI } from '../services/api';
@@ -73,6 +97,7 @@ const IncidentsPage: React.FC = () => {
   // State management
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [stats, setStats] = useState<IncidentStats | null>(null);
+  const [sites, setSites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
@@ -85,6 +110,16 @@ const IncidentsPage: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Data fetching functions
+  const fetchSites = useCallback(async () => {
+    try {
+      const response = await clientAPI.getSites();
+      setSites(response.data || []);
+    } catch (err) {
+      console.error('Failed to fetch sites:', err);
+      // Don't set error for sites as it's not critical
+    }
+  }, []);
+
   const fetchIncidents = useCallback(async () => {
     // Check authentication availability first
     const authAvailable = await isAuthenticationAvailable();
@@ -203,8 +238,9 @@ const IncidentsPage: React.FC = () => {
 
   // Effects
   useEffect(() => {
+    fetchSites();
     fetchIncidents();
-  }, [fetchIncidents]);
+  }, [fetchSites, fetchIncidents]);
 
   // Loading state
   if (loading && incidents.length === 0) {
@@ -320,6 +356,246 @@ const IncidentsPage: React.FC = () => {
           </Grid>
         </Grid>
       )}
+
+      {/* Filters and Search */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <FilterIcon color="primary" />
+            <Typography variant="h6">Filters</Typography>
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="Search incidents"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                placeholder="Search by title, description, or location..."
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Type</InputLabel>
+                <Select
+                  value={filterType}
+                  label="Type"
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <MenuItem value="all">All Types</MenuItem>
+                  <MenuItem value="SECURITY_BREACH">Security Breach</MenuItem>
+                  <MenuItem value="EMERGENCY">Emergency</MenuItem>
+                  <MenuItem value="SAFETY_VIOLATION">Safety Violation</MenuItem>
+                  <MenuItem value="EQUIPMENT_FAILURE">Equipment Failure</MenuItem>
+                  <MenuItem value="MEDICAL">Medical</MenuItem>
+                  <MenuItem value="FIRE">Fire</MenuItem>
+                  <MenuItem value="THEFT">Theft</MenuItem>
+                  <MenuItem value="VANDALISM">Vandalism</MenuItem>
+                  <MenuItem value="OTHER">Other</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={filterStatus}
+                  label="Status"
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <MenuItem value="all">All Status</MenuItem>
+                  <MenuItem value="OPEN">Open</MenuItem>
+                  <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                  <MenuItem value="RESOLVED">Resolved</MenuItem>
+                  <MenuItem value="CLOSED">Closed</MenuItem>
+                  <MenuItem value="ESCALATED">Escalated</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Severity</InputLabel>
+                <Select
+                  value={filterSeverity}
+                  label="Severity"
+                  onChange={(e) => setFilterSeverity(e.target.value)}
+                >
+                  <MenuItem value="all">All Severity</MenuItem>
+                  <MenuItem value="LOW">Low</MenuItem>
+                  <MenuItem value="MEDIUM">Medium</MenuItem>
+                  <MenuItem value="HIGH">High</MenuItem>
+                  <MenuItem value="CRITICAL">Critical</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Site</InputLabel>
+                <Select
+                  value={filterSite}
+                  label="Site"
+                  onChange={(e) => setFilterSite(e.target.value)}
+                >
+                  <MenuItem value="all">All Sites</MenuItem>
+                  {sites.map((site) => (
+                    <MenuItem key={site.id} value={site.id}>
+                      {site.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
+      {/* Incidents Table */}
+      <Card>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="h6">Recent Incidents</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {incidents.length} incidents found
+            </Typography>
+          </Box>
+
+          {loading && incidents.length === 0 ? (
+            <Box display="flex" justifyContent="center" py={4}>
+              <CircularProgress />
+            </Box>
+          ) : incidents.length === 0 ? (
+            <Box textAlign="center" py={4}>
+              <IncidentIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+              <Typography variant="h6" color="text.secondary">
+                No incidents found
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Try adjusting your filters or search criteria
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <TableContainer component={Paper} variant="outlined">
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Title</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Severity</TableCell>
+                      <TableCell>Location</TableCell>
+                      <TableCell>Reported By</TableCell>
+                      <TableCell>Date</TableCell>
+                      <TableCell align="center">Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {incidents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((incident) => (
+                      <TableRow key={incident.id} hover>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            {getTypeIcon(incident.type)}
+                            <Typography variant="body2">
+                              {incident.type.replace('_', ' ')}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight="medium">
+                            {incident.title}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {incident.description.substring(0, 50)}...
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={incident.status}
+                            size="small"
+                            color={
+                              incident.status === 'RESOLVED' || incident.status === 'CLOSED' ? 'success' :
+                              incident.status === 'ESCALATED' ? 'error' :
+                              incident.status === 'IN_PROGRESS' ? 'warning' : 'default'
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={incident.severity}
+                            size="small"
+                            color={
+                              incident.severity === 'CRITICAL' ? 'error' :
+                              incident.severity === 'HIGH' ? 'warning' :
+                              incident.severity === 'MEDIUM' ? 'info' : 'default'
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <LocationIcon fontSize="small" color="action" />
+                            <Typography variant="body2">
+                              {incident.location}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <PersonIcon fontSize="small" color="action" />
+                            <Typography variant="body2">
+                              {incident.reporter.firstName} {incident.reporter.lastName}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <TimeIcon fontSize="small" color="action" />
+                            <Typography variant="body2">
+                              {new Date(incident.timestamp).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Tooltip title="View Details">
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                // TODO: Implement incident details dialog
+                                console.log('View incident:', incident.id);
+                              }}
+                            >
+                              <ViewIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <TablePagination
+                component="div"
+                count={incidents.length}
+                page={page}
+                onPageChange={(_, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+              />
+            </>
+          )}
+        </CardContent>
+      </Card>
     </Box>
   );
 };

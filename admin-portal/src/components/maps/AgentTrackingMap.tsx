@@ -18,8 +18,6 @@ import {
 } from '@mui/material';
 import {
   Refresh as RefreshIcon,
-  Fullscreen as FullscreenIcon,
-  FilterList as FilterIcon,
   LocationOn as LocationIcon,
   Person as PersonIcon,
   Warning as WarningIcon,
@@ -66,7 +64,6 @@ const defaultCenter = {
 };
 
 const AgentTrackingMap: React.FC = () => {
-  const { user } = useAuth();
   const [agents, setAgents] = useState<AgentLocation[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,7 +73,7 @@ const AgentTrackingMap: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showSites, setShowSites] = useState(true);
   const [mapCenter, setMapCenter] = useState(defaultCenter);
-  const [mapZoom, setMapZoom] = useState(10);
+  const [mapZoom] = useState(10);
 
   const fetchAgentLocations = useCallback(async () => {
     try {

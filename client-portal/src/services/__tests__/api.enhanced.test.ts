@@ -99,34 +99,50 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
   describe('Token Type Detection', () => {
     it('should detect JWT tokens correctly', async () => {
       const jwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
-      
-      const config = await createAuthenticatedRequest(jwtToken);
-      
-      expect(config.headers['X-Token-Type']).toBe('jwt');
+
+      // Mock the token provider to return the JWT token
+      setAuthToken(jwtToken);
+
+      const config = await createAuthenticatedRequest({ url: '/test' });
+
+      expect(config.headers).toBeDefined();
+      expect(config.headers!['X-Token-Type']).toBe('jwt');
     });
 
     it('should detect development tokens correctly', async () => {
       const devToken = 'dev:client@bahinlink.com';
-      
-      const config = await createAuthenticatedRequest(devToken);
-      
-      expect(config.headers['X-Token-Type']).toBe('development');
+
+      // Mock the token provider to return the dev token
+      setAuthToken(devToken);
+
+      const config = await createAuthenticatedRequest({ url: '/test' });
+
+      expect(config.headers).toBeDefined();
+      expect(config.headers!['X-Token-Type']).toBe('development');
     });
 
     it('should detect email tokens correctly', async () => {
       const emailToken = 'client@bahinlink.com';
-      
-      const config = await createAuthenticatedRequest(emailToken);
-      
-      expect(config.headers['X-Token-Type']).toBe('email');
+
+      // Mock the token provider to return the email token
+      setAuthToken(emailToken);
+
+      const config = await createAuthenticatedRequest({ url: '/test' });
+
+      expect(config.headers).toBeDefined();
+      expect(config.headers!['X-Token-Type']).toBe('email');
     });
 
     it('should default to JWT for unknown token formats', async () => {
       const unknownToken = 'unknown-token-format';
-      
-      const config = await createAuthenticatedRequest(unknownToken);
-      
-      expect(config.headers['X-Token-Type']).toBe('jwt');
+
+      // Mock the token provider to return the unknown token
+      setAuthToken(unknownToken);
+
+      const config = await createAuthenticatedRequest({ url: '/test' });
+
+      expect(config.headers).toBeDefined();
+      expect(config.headers!['X-Token-Type']).toBe('jwt');
     });
   });
 
@@ -168,10 +184,11 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
       setAuthToken(jwtToken);
       
       const tokenInfo = await getCurrentTokenInfo();
-      
-      expect(tokenInfo.token).toBe(jwtToken);
-      expect(tokenInfo.type).toBe('jwt');
-      expect(tokenInfo.isValid).toBe(true);
+
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.token).toBe(jwtToken);
+      expect(tokenInfo!.type).toBe('jwt');
+      expect(tokenInfo!.isValid).toBe(true);
     });
 
     it('should return default info when no token is available', async () => {
@@ -179,10 +196,11 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
       expect(getAuthToken()).toBeNull();
       
       const tokenInfo = await getCurrentTokenInfo();
-      
-      expect(tokenInfo.token).toBe('');
-      expect(tokenInfo.type).toBe('development');
-      expect(tokenInfo.isValid).toBe(false);
+
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.token).toBe('');
+      expect(tokenInfo!.type).toBe('development');
+      expect(tokenInfo!.isValid).toBe(false);
     });
 
     it('should check authentication availability correctly', async () => {
@@ -230,12 +248,14 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
         fallbackEmail: 'client@bahinlink.com'
       });
       
-      const tokenInfo = await devTokenProvider.getTokenInfo();
-      
+      const token = await devTokenProvider.getAuthToken();
+      const tokenType = await devTokenProvider.getTokenType();
+      const isValid = await devTokenProvider.hasValidToken();
+
       // In development mode, should provide a development token
-      expect(tokenInfo.type).toBe('development');
-      expect(tokenInfo.token).toContain('dev:');
-      expect(tokenInfo.isValid).toBe(true);
+      expect(tokenType).toBe('development');
+      expect(token).toContain('dev:');
+      expect(isValid).toBe(true);
     });
 
     it('should use fallback email in development mode', async () => {
@@ -248,11 +268,13 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
         fallbackEmail: 'client@bahinlink.com'
       });
       
-      const tokenInfo = await devTokenProvider.getTokenInfo();
-      
-      expect(tokenInfo.token).toBe('dev:client@bahinlink.com');
-      expect(tokenInfo.type).toBe('development');
-      expect(tokenInfo.isValid).toBe(true);
+      const token = await devTokenProvider.getAuthToken();
+      const tokenType = await devTokenProvider.getTokenType();
+      const isValid = await devTokenProvider.hasValidToken();
+
+      expect(token).toBe('dev:client@bahinlink.com');
+      expect(tokenType).toBe('development');
+      expect(isValid).toBe(true);
     });
   });
 
@@ -298,18 +320,26 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
       ];
 
       for (const testCase of testCases) {
-        const config = await createAuthenticatedRequest(testCase.token);
-        
-        expect(config.headers['Authorization']).toBe(`Bearer ${testCase.token}`);
-        expect(config.headers['X-Token-Type']).toBe(testCase.expectedType);
+        // Mock the token provider to return the test token
+        setAuthToken(testCase.token);
+
+        const config = await createAuthenticatedRequest({ url: '/test' });
+
+        expect(config.headers).toBeDefined();
+        expect(config.headers!['Authorization']).toBe(`Bearer ${testCase.token}`);
+        expect(config.headers!['X-Token-Type']).toBe(testCase.expectedType);
       }
     });
 
     it('should handle empty or invalid tokens', async () => {
-      const config = await createAuthenticatedRequest('');
-      
-      expect(config.headers['Authorization']).toBe('Bearer ');
-      expect(config.headers['X-Token-Type']).toBe('jwt'); // Default fallback
+      // Mock the token provider to return empty token
+      setAuthToken('');
+
+      const config = await createAuthenticatedRequest({ url: '/test' });
+
+      expect(config.headers).toBeDefined();
+      expect(config.headers!['Authorization']).toBe('Bearer ');
+      expect(config.headers!['X-Token-Type']).toBe('jwt'); // Default fallback
     });
   });
 
@@ -351,9 +381,10 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
       setAuthToken(jwtToken);
       
       const tokenInfo = await getCurrentTokenInfo();
-      
-      expect(tokenInfo.expiresAt).toBeInstanceOf(Date);
-      expect(tokenInfo.expiresAt!.getTime()).toBeGreaterThan(Date.now());
+
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.expiresAt).toBeInstanceOf(Date);
+      expect(tokenInfo!.expiresAt!.getTime()).toBeGreaterThan(Date.now());
     });
 
     it('should handle JWT tokens without expiration', async () => {
@@ -369,8 +400,9 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
       setAuthToken(jwtToken);
       
       const tokenInfo = await getCurrentTokenInfo();
-      
-      expect(tokenInfo.expiresAt).toBeUndefined();
+
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.expiresAt).toBeUndefined();
     });
 
     it('should handle malformed JWT tokens gracefully', async () => {
@@ -379,11 +411,12 @@ describe('Enhanced Client Portal API Service Token Handling', () => {
       setAuthToken(malformedToken);
       
       const tokenInfo = await getCurrentTokenInfo();
-      
+
       // Should not throw error and should still return token info
-      expect(tokenInfo.token).toBe(malformedToken);
-      expect(tokenInfo.type).toBe('jwt');
-      expect(tokenInfo.expiresAt).toBeUndefined();
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.token).toBe(malformedToken);
+      expect(tokenInfo!.type).toBe('jwt');
+      expect(tokenInfo!.expiresAt).toBeUndefined();
     });
   });
 });

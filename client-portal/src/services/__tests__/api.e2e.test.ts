@@ -1,7 +1,8 @@
-import { 
-  clientPortalAPI, 
+import {
+  clientPortalAPI,
   clientAPI,
-  isAuthenticationAvailable, 
+  userAPI,
+  isAuthenticationAvailable,
   getCurrentTokenInfo,
   refreshAuthToken,
   clearAuthenticationState,
@@ -31,7 +32,7 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
   describe('Development Mode Authentication Flow', () => {
     beforeAll(() => {
       // Set development mode
-      process.env.NODE_ENV = 'development';
+      (process.env as any).NODE_ENV = 'development';
     });
 
     it('should authenticate and make API calls in development mode', async () => {
@@ -43,9 +44,10 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
       const tokenInfo = await getCurrentTokenInfo();
       console.log('Client token info in dev mode:', tokenInfo);
 
-      expect(tokenInfo.type).toBe('development');
-      expect(tokenInfo.isValid).toBe(true);
-      expect(tokenInfo.token).toContain('dev:');
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.type).toBe('development');
+      expect(tokenInfo!.isValid).toBe(true);
+      expect(tokenInfo!.token).toContain('dev:');
     });
 
     it('should make authenticated API calls with development token', async () => {
@@ -86,9 +88,9 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
       };
 
       const mockGet = jest.fn().mockResolvedValue(mockResponse);
-      clientAPI.getProfile = mockGet;
+      (userAPI as any).getProfile = mockGet;
 
-      const response = await clientAPI.getProfile();
+      const response = await userAPI.getProfile();
 
       expect(mockGet).toHaveBeenCalled();
       expect(response.data.success).toBe(true);
@@ -133,9 +135,10 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
       
       // Get token info
       const tokenInfo = await getCurrentTokenInfo();
-      expect(tokenInfo.token).toBe(jwtToken);
-      expect(tokenInfo.type).toBe('jwt');
-      expect(tokenInfo.isValid).toBe(true);
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.token).toBe(jwtToken);
+      expect(tokenInfo!.type).toBe('jwt');
+      expect(tokenInfo!.isValid).toBe(true);
     });
   });
 
@@ -153,9 +156,10 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
 
       // Get token info
       const tokenInfo = await getCurrentTokenInfo();
-      expect(tokenInfo.type).toBe('jwt');
-      expect(tokenInfo.token).toBe(jwtToken);
-      expect(tokenInfo.isValid).toBe(true);
+      expect(tokenInfo).not.toBeNull();
+      expect(tokenInfo!.type).toBe('jwt');
+      expect(tokenInfo!.token).toBe(jwtToken);
+      expect(tokenInfo!.isValid).toBe(true);
     });
 
     it('should make API calls with JWT token', async () => {
@@ -189,7 +193,7 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
 
       // Set production mode to test fallback
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      (process.env as any).NODE_ENV = 'production';
 
       try {
         const authAvailable = await isAuthenticationAvailable();
@@ -197,9 +201,10 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
 
         // Should handle gracefully without throwing
         const tokenInfo = await getCurrentTokenInfo();
-        expect(tokenInfo.isValid).toBe(false);
+        expect(tokenInfo).not.toBeNull();
+        expect(tokenInfo!.isValid).toBe(false);
       } finally {
-        process.env.NODE_ENV = originalEnv;
+        (process.env as any).NODE_ENV = originalEnv;
       }
     });
 
@@ -238,7 +243,7 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
       // Mock window.location.href
       const originalLocation = window.location;
       delete (window as any).location;
-      window.location = { ...originalLocation, href: '' };
+      (window as any).location = { ...originalLocation, href: '' };
 
       // Mock an API error that should trigger redirect
       const mockError = {
@@ -259,7 +264,7 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
       }
 
       // Restore original location
-      window.location = originalLocation;
+      (window as any).location = originalLocation;
     });
   });
 
@@ -288,9 +293,10 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
         setAuthToken(testCase.token);
 
         const tokenInfo = await getCurrentTokenInfo();
-        
-        expect(tokenInfo.type).toBe(testCase.expectedType);
-        expect(tokenInfo.token).toBe(testCase.token);
+
+        expect(tokenInfo).not.toBeNull();
+        expect(tokenInfo!.type).toBe(testCase.expectedType);
+        expect(tokenInfo!.token).toBe(testCase.token);
         
         console.log(`✓ Client ${testCase.description} detected correctly as ${testCase.expectedType}`);
         
@@ -378,12 +384,13 @@ describe('End-to-End Authentication Flow Tests - Client Portal', () => {
     it('should support the token info pattern used by client components', async () => {
       // Test the pattern used by components for debugging
       const tokenInfo = await getCurrentTokenInfo();
-      
+
+      expect(tokenInfo).not.toBeNull();
       expect(tokenInfo).toHaveProperty('type');
       expect(tokenInfo).toHaveProperty('token');
       expect(tokenInfo).toHaveProperty('isValid');
-      
-      console.log(`✓ Client token info pattern works: ${tokenInfo.type} token, valid: ${tokenInfo.isValid}`);
+
+      console.log(`✓ Client token info pattern works: ${tokenInfo!.type} token, valid: ${tokenInfo!.isValid}`);
     });
 
     it('should handle component error scenarios gracefully', async () => {

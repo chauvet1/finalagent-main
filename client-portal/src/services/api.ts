@@ -358,7 +358,8 @@ export const getCurrentTokenInfo = async () => {
     return {
       token: tokenInfo.token,
       type: tokenInfo.type,
-      isValid: tokenInfo.isValid
+      isValid: tokenInfo.isValid,
+      expiresAt: tokenInfo.expiresAt
     };
   } catch (error) {
     console.debug('Failed to get token info:', error);

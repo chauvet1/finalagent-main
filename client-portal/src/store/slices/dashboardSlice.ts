@@ -117,19 +117,19 @@ export const fetchDashboardData = createAsyncThunk(
         }));
       };
 
-      const sanitizeMetrics = (metrics: any) => ({
+      const sanitizeMetrics = (metrics: any): DashboardMetrics => ({
         activeSites: metrics?.activeSites || 0,
-        activeShifts: metrics?.activeShifts || 0,
-        incidentsToday: metrics?.incidentsToday || 0,
-        pendingRequests: metrics?.pendingRequests || 0,
-        totalReports: metrics?.totalReports || 0,
-        weeklyReports: metrics?.weeklyReports || 0,
-        monthlyReports: metrics?.monthlyReports || 0,
-        totalIncidents: metrics?.totalIncidents || 0,
-        weeklyIncidents: metrics?.weeklyIncidents || 0,
-        monthlyIncidents: metrics?.monthlyIncidents || 0,
-        averageResponseTime: metrics?.averageResponseTime || 0,
-        complianceScore: metrics?.complianceScore || 0
+        activeAgents: metrics?.activeAgents || metrics?.activeShifts || 0,
+        ongoingShifts: metrics?.ongoingShifts || metrics?.activeShifts || 0,
+        reportsToday: metrics?.reportsToday || metrics?.incidentsToday || 0,
+        sitesTrend: metrics?.sitesTrend || 0,
+        agentsTrend: metrics?.agentsTrend || 0,
+        shiftsTrend: metrics?.shiftsTrend || 0,
+        reportsTrend: metrics?.reportsTrend || 0,
+        systemHealth: metrics?.systemHealth || {
+          status: 'operational' as const,
+          issues: []
+        }
       });
 
       // Combine the responses into a unified dashboard data structure

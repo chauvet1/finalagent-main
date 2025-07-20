@@ -16,18 +16,24 @@ export interface TokenProvider {
    * @returns Promise resolving to the token string
    */
   getAuthToken(): Promise<string>;
-  
+
   /**
    * Get the type of the current token
    * @returns The token type
    */
   getTokenType(): Promise<TokenType>;
-  
+
   /**
    * Check if a valid token is available
    * @returns Promise resolving to boolean indicating token availability
    */
   hasValidToken(): Promise<boolean>;
+
+  /**
+   * Get comprehensive token information
+   * @returns Promise resolving to token information
+   */
+  getTokenInfo(): Promise<TokenInfo>;
 }
 
 /**

@@ -7,48 +7,48 @@
  * Patch Number.prototype.toLocaleString to handle undefined/null values
  */
 const originalNumberToLocaleString = Number.prototype.toLocaleString;
-Number.prototype.toLocaleString = function(this: number, ...args: any[]) {
+Number.prototype.toLocaleString = function(this: number, locales?: string | string[], options?: Intl.NumberFormatOptions) {
   if (this === undefined || this === null || isNaN(this)) {
     console.warn('toLocaleString called on invalid number:', this);
     return '0';
   }
-  return originalNumberToLocaleString.apply(this, args);
+  return originalNumberToLocaleString.call(this, locales, options);
 };
 
 /**
  * Patch Date.prototype.toLocaleString to handle invalid dates
  */
 const originalDateToLocaleString = Date.prototype.toLocaleString;
-Date.prototype.toLocaleString = function(this: Date, ...args: any[]) {
+Date.prototype.toLocaleString = function(this: Date, locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
   if (!this || isNaN(this.getTime())) {
     console.warn('toLocaleString called on invalid date:', this);
     return 'Invalid Date';
   }
-  return originalDateToLocaleString.apply(this, args);
+  return originalDateToLocaleString.call(this, locales, options);
 };
 
 /**
  * Patch Date.prototype.toLocaleDateString to handle invalid dates
  */
 const originalDateToLocaleDateString = Date.prototype.toLocaleDateString;
-Date.prototype.toLocaleDateString = function(this: Date, ...args: any[]) {
+Date.prototype.toLocaleDateString = function(this: Date, locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
   if (!this || isNaN(this.getTime())) {
     console.warn('toLocaleDateString called on invalid date:', this);
     return 'Invalid Date';
   }
-  return originalDateToLocaleDateString.apply(this, args);
+  return originalDateToLocaleDateString.call(this, locales, options);
 };
 
 /**
  * Patch Date.prototype.toLocaleTimeString to handle invalid dates
  */
 const originalDateToLocaleTimeString = Date.prototype.toLocaleTimeString;
-Date.prototype.toLocaleTimeString = function(this: Date, ...args: any[]) {
+Date.prototype.toLocaleTimeString = function(this: Date, locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
   if (!this || isNaN(this.getTime())) {
     console.warn('toLocaleTimeString called on invalid date:', this);
     return 'Invalid Time';
   }
-  return originalDateToLocaleTimeString.apply(this, args);
+  return originalDateToLocaleTimeString.call(this, locales, options);
 };
 
 /**
