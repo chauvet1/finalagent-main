@@ -76,11 +76,40 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle authentication errors
     if (error.response?.status === 401) {
       // Unauthorized - redirect to login
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+
+    // Handle network errors in production
+    if (!error.response && error.code === 'NETWORK_ERROR') {
+      console.error('Network error - API may be unavailable');
+      // Return a fallback response for graceful degradation
+      return Promise.reject({
+        ...error,
+        response: {
+          status: 503,
+          data: {
+            success: false,
+            error: {
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Service temporarily unavailable. Please try again later.'
+            }
+          }
+        }
+      });
+    }
+
+    // Log error for debugging
+    console.error('API Error:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+
     return Promise.reject(error);
   }
 );

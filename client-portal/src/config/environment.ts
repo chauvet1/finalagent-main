@@ -174,11 +174,21 @@ export const IS_DEVELOPMENT = ENV.isDevelopment;
 export const validateEnvironment = (): void => {
   const config = getEnvironmentConfig();
   const errors: string[] = [];
-  
+
   if (!config.auth.clerkPublishableKey) {
     errors.push('REACT_APP_CLERK_PUBLISHABLE_KEY is required');
   }
-  
+
+  // Handle Clerk key validation gracefully for demo/validation phase
+  if (config.isProduction && config.auth.clerkPublishableKey) {
+    if (config.auth.clerkPublishableKey.startsWith('pk_test_')) {
+      // Allow development keys in production for demo/validation phase
+      // Just log a notice instead of throwing an error
+      console.info('ℹ️  Using development Clerk keys in production for demo/validation phase');
+      console.info('   This is acceptable for client validation but should be updated for live deployment');
+    }
+  }
+
   if (config.isProduction) {
     if (!config.portals.client) {
       errors.push('Client portal URL is required in production');

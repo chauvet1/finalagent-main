@@ -45,7 +45,7 @@ import {
   HourglassEmpty as PendingIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
-import { isAuthenticationAvailable, getCurrentTokenInfo, clientAPI } from '../services/api';
+import { isAuthenticationAvailable, getCurrentTokenInfo, clientAPI, clientPortalAPI } from '../services/api';
 
 interface Report {
   id: string;
@@ -155,20 +155,69 @@ const ReportsPage: React.FC = () => {
       // Use the enhanced client API service
       const reportsResponse = await clientAPI.getReports(params);
       
-      // For stats, we'll simulate the data since there's no specific stats endpoint
-      const mockStats = {
-        totalReports: reportsResponse.data?.length || 0,
-        todayReports: 0,
-        pendingReports: 0,
-        criticalReports: 0,
-        incidentReports: 0,
-        patrolReports: 0,
-        averageResponseTime: 0,
-        reportsByType: [],
+      // Calculate real stats from the reports data
+      const reports = reportsResponse.data || [];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const todayReports = reports.filter((report: any) => {
+        const reportDate = new Date(report.createdAt);
+        reportDate.setHours(0, 0, 0, 0);
+        return reportDate.getTime() === today.getTime();
+      }).length;
+
+      const pendingReports = reports.filter((report: any) =>
+        report.status === 'PENDING' || report.status === 'SUBMITTED'
+      ).length;
+
+      const criticalReports = reports.filter((report: any) =>
+        report.priority === 'CRITICAL' || report.priority === 'HIGH'
+      ).length;
+
+      const incidentReports = reports.filter((report: any) =>
+        report.type === 'INCIDENT'
+      ).length;
+
+      const patrolReports = reports.filter((report: any) =>
+        report.type === 'PATROL'
+      ).length;
+
+      // Calculate average response time for resolved reports
+      const resolvedReports = reports.filter((report: any) =>
+        report.status === 'RESOLVED' && report.resolvedAt
+      );
+
+      const averageResponseTime = resolvedReports.length > 0
+        ? resolvedReports.reduce((sum: number, report: any) => {
+            const created = new Date(report.createdAt).getTime();
+            const resolved = new Date(report.resolvedAt).getTime();
+            return sum + (resolved - created);
+          }, 0) / resolvedReports.length / (1000 * 60 * 60) // Convert to hours
+        : 0;
+
+      // Group reports by type
+      const reportsByType = reports.reduce((acc: any, report: any) => {
+        const type = report.type || 'OTHER';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
+
+      const realStats = {
+        totalReports: reports.length,
+        todayReports,
+        pendingReports,
+        criticalReports,
+        incidentReports,
+        patrolReports,
+        averageResponseTime: Math.round(averageResponseTime * 10) / 10,
+        reportsByType: Object.entries(reportsByType).map(([type, count]) => ({
+          type,
+          count: count as number
+        })),
       };
 
-      setReports(reportsResponse.data || []);
-      setStats(mockStats);
+      setReports(reports);
+      setStats(realStats);
       setLastUpdated(new Date());
 
     } catch (err: any) {
@@ -192,29 +241,70 @@ const ReportsPage: React.FC = () => {
       const tokenInfo = await getCurrentTokenInfo();
       console.debug(`Exporting reports with ${tokenInfo?.type || 'unknown'} token`);
 
-      // Note: Since there's no specific export endpoint in the enhanced service,
-      // we'll simulate the export for now
-      // In a real implementation, you'd add specific export endpoints to the API service
-      
-      // Simulate successful export
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Create a mock PDF blob for demonstration
-      const mockPdfContent = 'Mock PDF content for security reports';
-      const blob = new Blob([mockPdfContent], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `security-reports-${new Date().toISOString().split('T')[0]}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      // Use the real API endpoint for PDF export
+      try {
+        const response = await clientPortalAPI.getReports({
+          format: 'pdf',
+          type: filterType,
+          status: filterStatus,
+          priority: filterPriority,
+          site: filterSite,
+          search: searchQuery
+        });
+
+        // Handle the blob response
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `security-reports-${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (exportError) {
+        console.warn('PDF export endpoint not available, generating CSV instead');
+
+        // Fallback to CSV export using current reports data
+        const csvContent = generateCSVFromReports(reports);
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `security-reports-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
 
     } catch (err: any) {
       console.error('Failed to export reports:', err);
       setError('Failed to export reports. Please try again.');
     }
+  };
+
+  // CSV generation utility
+  const generateCSVFromReports = (reportsData: any[]) => {
+    const headers = ['ID', 'Type', 'Title', 'Status', 'Priority', 'Site', 'Agent', 'Created At', 'Updated At'];
+    const csvRows = [headers.join(',')];
+
+    reportsData.forEach(report => {
+      const row = [
+        report.id || '',
+        report.type || '',
+        `"${(report.title || '').replace(/"/g, '""')}"`,
+        report.status || '',
+        report.priority || '',
+        `"${(report.siteName || '').replace(/"/g, '""')}"`,
+        `"${(report.agentName || '').replace(/"/g, '""')}"`,
+        report.createdAt || '',
+        report.updatedAt || ''
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    return csvRows.join('\n');
   };
 
   // Utility functions

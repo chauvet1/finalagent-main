@@ -109,20 +109,83 @@ router.get('/dashboard/stats', auth_1.requireAuth, async (req, res) => {
                 currentSiteId: { in: siteIds }
             }
         });
+        const activeSites = sites.filter(site => site.status === 'ACTIVE').length;
+        const totalSites = sites.length;
+        const completedShifts = await prisma.shift.count({
+            where: {
+                siteId: { in: siteIds },
+                status: 'COMPLETED',
+                createdAt: {
+                    gte: today,
+                    lt: tomorrow
+                }
+            }
+        });
+        const todayReports = await prisma.report.count({
+            where: {
+                siteId: { in: siteIds },
+                createdAt: {
+                    gte: today,
+                    lt: tomorrow
+                }
+            }
+        });
+        const recentIncidents = await prisma.incident.findMany({
+            where: {
+                siteId: { in: siteIds },
+                status: 'RESOLVED',
+                occurredAt: {
+                    gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+                }
+            },
+            select: {
+                occurredAt: true,
+                resolvedAt: true
+            }
+        });
+        const avgResponseTime = recentIncidents.length > 0
+            ? recentIncidents.reduce((sum, incident) => {
+                if (incident.resolvedAt) {
+                    const responseTime = incident.resolvedAt.getTime() - incident.occurredAt.getTime();
+                    return sum + responseTime;
+                }
+                return sum;
+            }, 0) / recentIncidents.length / (1000 * 60)
+            : 0;
+        const totalShiftsLast30Days = await prisma.shift.count({
+            where: {
+                siteId: { in: siteIds },
+                createdAt: {
+                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                }
+            }
+        });
+        const completedShiftsLast30Days = await prisma.shift.count({
+            where: {
+                siteId: { in: siteIds },
+                status: 'COMPLETED',
+                createdAt: {
+                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                }
+            }
+        });
+        const satisfactionScore = totalShiftsLast30Days > 0
+            ? (completedShiftsLast30Days / totalShiftsLast30Days) * 100
+            : 85;
         res.json({
             success: true,
             data: {
                 overview: {
-                    activeSites: 4,
-                    totalSites: 4,
-                    activeShifts: 5,
-                    incidentsToday: 2,
-                    pendingRequests: 3,
-                    totalAgents: 12,
-                    completedShifts: 8,
-                    satisfactionScore: 95.5,
-                    responseTime: 8.2,
-                    todayReports: 7
+                    activeSites,
+                    totalSites,
+                    activeShifts,
+                    incidentsToday,
+                    pendingRequests,
+                    totalAgents,
+                    completedShifts,
+                    satisfactionScore: Math.round(satisfactionScore * 10) / 10,
+                    responseTime: Math.round(avgResponseTime * 10) / 10,
+                    todayReports
                 },
                 lastUpdated: new Date().toISOString(),
                 timestamp: new Date().toISOString()

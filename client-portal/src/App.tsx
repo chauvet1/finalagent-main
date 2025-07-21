@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Box, CircularProgress } from '@mui/material';
+import { CssBaseline, Box, CircularProgress, Typography } from '@mui/material';
 import { Provider } from 'react-redux';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -11,6 +11,7 @@ import { store } from './store';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import { SocketProvider } from './providers/SocketProvider';
 import { NotificationProvider } from './providers/NotificationProvider';
+import { validateEnvironment } from './config/environment';
 
 // Environment configuration test (runs automatically in development)
 import './utils/environmentTest';
@@ -200,6 +201,34 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  // Validate environment configuration
+  try {
+    validateEnvironment();
+  } catch (error) {
+    console.error('Environment validation failed:', error);
+    // In production, show a user-friendly error instead of crashing
+    if (process.env.NODE_ENV === 'production') {
+      return (
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100vh"
+          p={3}
+        >
+          <Typography variant="h4" color="error" gutterBottom>
+            Configuration Error
+          </Typography>
+          <Typography variant="body1" color="text.secondary" textAlign="center">
+            The application is not properly configured. Please contact support.
+          </Typography>
+        </Box>
+      );
+    }
+    throw error;
+  }
+
   if (!process.env.REACT_APP_CLERK_PUBLISHABLE_KEY) {
     throw new Error('Missing Clerk publishable key');
   }

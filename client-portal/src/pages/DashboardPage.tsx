@@ -63,25 +63,26 @@ const DashboardPage: React.FC = () => {
 
   // Data fetching functions
   const fetchDashboardData = useCallback(async () => {
-    // Use the clientPortalAPI service for consistent API calls
-    const [statsResult, activityResult, sitesResult] = await Promise.all([
-      clientPortalAPI.getDashboard(),
-      clientPortalAPI.getAnalytics(),
-      clientPortalAPI.getSites()
-    ]);
+    try {
+      // Use the clientPortalAPI service for consistent API calls
+      const [statsResult, activityResult, sitesResult] = await Promise.all([
+        clientPortalAPI.getDashboard(),
+        clientPortalAPI.getAnalytics(),
+        clientPortalAPI.getSites()
+      ]);
 
-    // Handle stats data
-    const statsData = statsResult.data.overview;
-    setStats({
-      activeSites: statsData.activeSites,
-      totalAgents: statsData.totalAgents,
-      onDutyAgents: statsData.activeShifts,
-      todayReports: statsData.todayReports,
-      openIncidents: statsData.incidentsToday,
-      completedShifts: statsData.completedShifts,
-      satisfactionScore: statsData.satisfactionScore,
-      responseTime: statsData.responseTime,
-    });
+      // Handle stats data with null checks and fallbacks
+      const statsData = statsResult?.data?.overview || {};
+      setStats({
+        activeSites: statsData.activeSites || 0,
+        totalAgents: statsData.totalAgents || 0,
+        onDutyAgents: statsData.activeShifts || 0,
+        todayReports: statsData.todayReports || 0,
+        openIncidents: statsData.incidentsToday || 0,
+        completedShifts: statsData.completedShifts || 0,
+        satisfactionScore: statsData.satisfactionScore || 0,
+        responseTime: statsData.responseTime || 0,
+      });
 
     // Handle activity data
     const activityData = activityResult.data;
@@ -150,6 +151,10 @@ const DashboardPage: React.FC = () => {
     setSiteStatuses(sitesArray);
     setLastUpdated(new Date());
     setLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+      setLoading(false);
+    }
   }, []);
 
   // Utility functions

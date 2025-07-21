@@ -129,20 +129,96 @@ router.get('/dashboard/stats', requireAuth, async (req, res) => {
       }
     });
 
+    // Calculate real data for overview using existing variables
+    const activeSites = sites.filter(site => site.status === 'ACTIVE').length;
+    const totalSites = sites.length;
+
+    // Get completed shifts today
+    const completedShifts = await prisma.shift.count({
+      where: {
+        siteId: { in: siteIds },
+        status: 'COMPLETED',
+        createdAt: {
+          gte: today,
+          lt: tomorrow
+        }
+      }
+    });
+
+    // Get today's reports
+    const todayReports = await prisma.report.count({
+      where: {
+        siteId: { in: siteIds },
+        createdAt: {
+          gte: today,
+          lt: tomorrow
+        }
+      }
+    });
+
+    // Calculate average response time from resolved incidents
+    const recentIncidents = await prisma.incident.findMany({
+      where: {
+        siteId: { in: siteIds },
+        status: 'RESOLVED',
+        occurredAt: {
+          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Last 7 days
+        }
+      },
+      select: {
+        occurredAt: true,
+        resolvedAt: true
+      }
+    });
+
+    const avgResponseTime = recentIncidents.length > 0
+      ? recentIncidents.reduce((sum, incident) => {
+          if (incident.resolvedAt) {
+            const responseTime = incident.resolvedAt.getTime() - incident.occurredAt.getTime();
+            return sum + responseTime;
+          }
+          return sum;
+        }, 0) / recentIncidents.length / (1000 * 60) // Convert to minutes
+      : 0;
+
+    // Calculate satisfaction score based on completed shifts (proxy metric)
+    const totalShiftsLast30Days = await prisma.shift.count({
+      where: {
+        siteId: { in: siteIds },
+        createdAt: {
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        }
+      }
+    });
+
+    const completedShiftsLast30Days = await prisma.shift.count({
+      where: {
+        siteId: { in: siteIds },
+        status: 'COMPLETED',
+        createdAt: {
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        }
+      }
+    });
+
+    const satisfactionScore = totalShiftsLast30Days > 0
+      ? (completedShiftsLast30Days / totalShiftsLast30Days) * 100
+      : 85; // Default score
+
     res.json({
       success: true,
       data: {
         overview: {
-          activeSites: 4,
-          totalSites: 4,
-          activeShifts: 5,
-          incidentsToday: 2,
-          pendingRequests: 3,
-          totalAgents: 12,
-          completedShifts: 8,
-          satisfactionScore: 95.5,
-          responseTime: 8.2,
-          todayReports: 7
+          activeSites,
+          totalSites,
+          activeShifts,
+          incidentsToday,
+          pendingRequests,
+          totalAgents,
+          completedShifts,
+          satisfactionScore: Math.round(satisfactionScore * 10) / 10,
+          responseTime: Math.round(avgResponseTime * 10) / 10,
+          todayReports
         },
         lastUpdated: new Date().toISOString(),
         timestamp: new Date().toISOString()
