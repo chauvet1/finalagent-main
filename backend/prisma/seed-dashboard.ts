@@ -17,11 +17,13 @@ async function seedDashboardData() {
           name: 'BahinLink Demo Client',
           contactEmail: 'demo@bahinlink.com',
           contactPhone: '+1-555-0123',
-          address: '123 Security Street, Demo City, DC 12345',
-          status: 'ACTIVE',
-          contractStartDate: new Date('2024-01-01'),
-          contractEndDate: new Date('2025-12-31'),
-          billingCycle: 'MONTHLY'
+          address: {
+            street: '123 Security Street',
+            city: 'Demo City',
+            state: 'DC',
+            zipCode: '12345'
+          },
+          status: 'active'
         }
       });
       console.log('✅ Created demo client');
