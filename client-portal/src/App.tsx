@@ -17,6 +17,7 @@ import { validateEnvironment } from './config/environment';
 import './utils/environmentTest';
 
 // Global fixes for common JavaScript errors (must be imported early)
+import './utils/globalFixes';
 
 
 // Components

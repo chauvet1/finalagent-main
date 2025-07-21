@@ -53,6 +53,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import { clientPortalAPI } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { safeFormatDate } from '../utils/formatUtils';
 
 interface Report {
   id: string;
@@ -234,7 +235,7 @@ const getUniqueValues = (field: keyof Report) => {
                 {report.title}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                {report.siteName} • {new Date(report.createdAt).toLocaleDateString()}
+                {report.siteName} • {safeFormatDate(report.createdAt)}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                 <Chip

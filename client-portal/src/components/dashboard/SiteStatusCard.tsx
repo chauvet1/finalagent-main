@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
+import { safeFormatTime } from '../../utils/formatUtils';
 
 interface SiteStatus {
   id: string;
@@ -40,7 +41,7 @@ const SiteStatusCard: React.FC<SiteStatusCardProps> = ({ sites }) => (
             <Typography>{site.name}</Typography>
             <Chip label={site.status} color={getStatusColor(site.status)} size="small" />
             <Typography variant="caption" color="text.secondary">
-              Agents: {site.agentsOnSite} | Updated: {new Date(site.lastUpdate).toLocaleTimeString()}
+              Agents: {site.agentsOnSite || 0} | Updated: {safeFormatTime(site.lastUpdate)}
             </Typography>
           </Box>
         ))}

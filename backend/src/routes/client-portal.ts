@@ -406,6 +406,90 @@ router.get('/analytics', requireAuth, async (req, res) => {
       })()
     ]);
 
+    // Get recent reports for activity feed
+    const recentReports = await prisma.report.findMany({
+      where: {
+        siteId: { in: siteIds }
+      },
+      include: {
+        author: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        },
+        site: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 10
+    });
+
+    // Get recent incidents for activity feed
+    const recentIncidents = await prisma.incident.findMany({
+      where: {
+        siteId: { in: siteIds }
+      },
+      include: {
+        reportedBy: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        },
+        site: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        occurredAt: 'desc'
+      },
+      take: 10
+    });
+
+    // Get recent attendance/shifts for activity feed
+    const recentAttendance = await prisma.shift.findMany({
+      where: {
+        siteId: { in: siteIds }
+      },
+      include: {
+        agent: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        },
+        site: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        startTime: 'desc'
+      },
+      take: 10
+    });
+
     res.json({
       success: true,
       data: {
@@ -417,14 +501,48 @@ router.get('/analytics', requireAuth, async (req, res) => {
           weeklyIncidents,
           monthlyIncidents,
           averageResponseTime,
-          complianceScore: totalReports > 0 ? Math.min(95, 80 + (weeklyReports / totalReports) * 15) : 85 // Calculate based on reporting frequency
+          complianceScore: totalReports > 0 ? Math.min(95, 80 + (weeklyReports / totalReports) * 15) : 85
         },
         performanceData: {
           responseTime: averageResponseTime,
           incidentResolution: 98.2,
           patrolCompletion: 99.1,
           clientSatisfaction: 94.7
-        }
+        },
+        recentReports: recentReports.map(report => ({
+          id: report.id,
+          title: report.title,
+          type: report.type,
+          status: report.status,
+          priority: report.priority || 'NORMAL',
+          agentName: `${report.author.user.firstName} ${report.author.user.lastName}`,
+          siteName: report.site?.name || 'Unknown Site',
+          timestamp: report.createdAt.toISOString(),
+          createdAt: report.createdAt.toISOString()
+        })),
+        recentIncidents: recentIncidents.map(incident => ({
+          id: incident.id,
+          title: incident.title,
+          description: incident.description,
+          severity: incident.severity,
+          status: incident.status,
+          reportedBy: incident.reportedBy
+            ? `${incident.reportedBy.user.firstName} ${incident.reportedBy.user.lastName}`
+            : 'Unknown Reporter',
+          siteName: incident.site?.name || 'Unknown Site',
+          timestamp: incident.occurredAt.toISOString(),
+          occurredAt: incident.occurredAt.toISOString(),
+          resolvedAt: incident.resolvedAt?.toISOString() || null
+        })),
+        recentAttendance: recentAttendance.map(shift => ({
+          id: shift.id,
+          agentName: `${shift.agent.user.firstName} ${shift.agent.user.lastName}`,
+          siteName: shift.site?.name || 'Unknown Site',
+          clockInTime: shift.startTime.toISOString(),
+          clockOutTime: shift.endTime?.toISOString() || null,
+          status: shift.status,
+          timestamp: shift.startTime.toISOString()
+        }))
       }
     });
   } catch (error) {
@@ -1145,9 +1263,32 @@ router.get('/sites', requireAuth, async (req, res) => {
       orderBy: { name: 'asc' }
     });
 
+    // Transform sites data to match frontend expectations
+    const transformedSites = sites.map(site => ({
+      id: site.id,
+      name: site.name,
+      status: site.status,
+      address: site.address,
+      agentsOnSite: site.shifts?.length || 0,
+      agentsOnDuty: site.shifts?.length || 0,
+      lastUpdate: site.updatedAt?.toISOString() || new Date().toISOString(),
+      lastActivity: site.updatedAt?.toISOString() || new Date().toISOString(),
+      openIncidents: 0, // TODO: Add real incident count
+      incidentCount: 0, // TODO: Add real incident count
+      recentReports: site._count?.reports || 0,
+      activeShifts: site.shifts?.map(shift => ({
+        id: shift.id,
+        agentName: `${shift.agent.user.firstName} ${shift.agent.user.lastName}`,
+        startTime: shift.startTime.toISOString(),
+        status: shift.status
+      })) || []
+    }));
+
     res.json({
       success: true,
-      data: { sites }
+      data: {
+        sites: transformedSites
+      }
     });
   } catch (error) {
     console.error('Error fetching client sites:', error);

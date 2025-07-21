@@ -84,66 +84,74 @@ const DashboardPage: React.FC = () => {
         responseTime: statsData.responseTime || 0,
       });
 
-    // Handle activity data
-    const activityData = activityResult.data;
+    // Handle activity data with proper null checks
+    const activityData = activityResult?.data || {};
     let combinedActivity: RecentActivity[] = [];
 
-    // Add reports as activities
-    combinedActivity = combinedActivity.concat(
-      activityData.recentReports.map((report: any) => ({
-        id: report.id,
-        type: 'REPORT' as const,
-        title: report.title,
-        description: `Report by ${report.agentName} at ${report.siteName}`,
-        timestamp: report.timestamp,
-        agentName: report.agentName,
-        siteName: report.siteName,
-        priority: report.priority
-      }))
-    );
+    // Add reports as activities (with null check)
+    if (activityData.recentReports && Array.isArray(activityData.recentReports)) {
+      combinedActivity = combinedActivity.concat(
+        activityData.recentReports.map((report: any) => ({
+          id: report.id || `report-${Date.now()}`,
+          type: 'REPORT' as const,
+          title: report.title || 'Untitled Report',
+          description: `Report by ${report.agentName || 'Unknown Agent'} at ${report.siteName || 'Unknown Site'}`,
+          timestamp: report.timestamp || report.createdAt || new Date().toISOString(),
+          agentName: report.agentName || 'Unknown Agent',
+          siteName: report.siteName || 'Unknown Site',
+          priority: report.priority || 'NORMAL'
+        }))
+      );
+    }
 
-    // Add incidents as activities
-    combinedActivity = combinedActivity.concat(
-      activityData.recentIncidents.map((incident: any) => ({
-        id: incident.id,
-        type: 'INCIDENT' as const,
-        title: incident.title,
-        description: `${incident.severity} incident reported by ${incident.reportedBy} at ${incident.siteName}`,
-        timestamp: incident.timestamp,
-        agentName: incident.reportedBy,
-        siteName: incident.siteName,
-        priority: incident.severity
-      }))
-    );
+    // Add incidents as activities (with null check)
+    if (activityData.recentIncidents && Array.isArray(activityData.recentIncidents)) {
+      combinedActivity = combinedActivity.concat(
+        activityData.recentIncidents.map((incident: any) => ({
+          id: incident.id || `incident-${Date.now()}`,
+          type: 'INCIDENT' as const,
+          title: incident.title || 'Untitled Incident',
+          description: `${incident.severity || 'Unknown'} incident reported by ${incident.reportedBy || 'Unknown Agent'} at ${incident.siteName || 'Unknown Site'}`,
+          timestamp: incident.timestamp || incident.occurredAt || new Date().toISOString(),
+          agentName: incident.reportedBy || 'Unknown Agent',
+          siteName: incident.siteName || 'Unknown Site',
+          priority: incident.severity || 'MEDIUM'
+        }))
+      );
+    }
 
-    // Add attendance as activities
-    combinedActivity = combinedActivity.concat(
-      activityData.recentAttendance.map((attendance: any) => ({
-        id: attendance.id,
-        type: attendance.clockOutTime ? 'SHIFT_END' as const : 'SHIFT_START' as const,
-        title: attendance.clockOutTime ? 'Shift Ended' : 'Shift Started',
-        description: `${attendance.agentName} at ${attendance.siteName}`,
-        timestamp: attendance.timestamp,
-        agentName: attendance.agentName,
-        siteName: attendance.siteName,
-        priority: 'LOW' as const
-      }))
-    );
+    // Add attendance as activities (with null check)
+    if (activityData.recentAttendance && Array.isArray(activityData.recentAttendance)) {
+      combinedActivity = combinedActivity.concat(
+        activityData.recentAttendance.map((attendance: any) => ({
+          id: attendance.id || `attendance-${Date.now()}`,
+          type: attendance.clockOutTime ? 'SHIFT_END' as const : 'SHIFT_START' as const,
+          title: attendance.clockOutTime ? 'Shift Ended' : 'Shift Started',
+          description: `${attendance.agentName || 'Unknown Agent'} at ${attendance.siteName || 'Unknown Site'}`,
+          timestamp: attendance.timestamp || attendance.clockInTime || new Date().toISOString(),
+          agentName: attendance.agentName || 'Unknown Agent',
+          siteName: attendance.siteName || 'Unknown Site',
+          priority: 'LOW' as const
+        }))
+      );
+    }
 
-    // Sort by timestamp (most recent first)
+    // Sort by timestamp (most recent first) with proper date handling
     combinedActivity.sort((a, b) => {
-      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      const dateA = new Date(a.timestamp || 0);
+      const dateB = new Date(b.timestamp || 0);
+      return dateB.getTime() - dateA.getTime();
     });
 
     setRecentActivity(combinedActivity);
 
-    // Handle sites data
-    const sitesData = sitesResult.data;
-    const sitesArray: SiteStatus[] = sitesData.sites.map((site: any) => ({
-      id: site.id,
-      name: site.name,
-      status: site.status,
-      agentsOnDuty: site.agentsOnSite,
+    // Handle sites data with proper null checks
+    const sitesData = sitesResult?.data || {};
+    const sitesArray: SiteStatus[] = (sitesData.sites || []).map((site: any) => ({
+      id: site.id || `site-${Date.now()}`,
+      name: site.name || 'Unknown Site',
+      status: site.status || 'UNKNOWN',
+      agentsOnDuty: site.agentsOnSite || 0,
       lastActivity: site.lastUpdate,
       incidentCount: site.openIncidents
     }));

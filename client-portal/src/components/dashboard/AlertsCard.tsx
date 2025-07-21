@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography, List, ListItem, ListItemText, Chip } from '@mui/material';
+import { safeFormatTimestamp } from '../../utils/formatUtils';
 
 interface Alert {
   id: string;
@@ -32,7 +33,7 @@ const AlertsCard: React.FC<AlertsCardProps> = ({ alerts }) => (
                 <>
                   <Typography variant="body2">{alert.message}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {new Date(alert.timestamp).toLocaleString()} | Priority: {alert.priority}
+                    {safeFormatTimestamp(alert.timestamp)} | Priority: {alert.priority}
                   </Typography>
                 </>
               }
