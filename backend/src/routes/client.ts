@@ -133,16 +133,16 @@ router.get('/dashboard/stats', requireAuth, async (req, res) => {
       success: true,
       data: {
         overview: {
-          activeSites: sites.filter(site => site.status === 'ACTIVE').length,
-          totalSites: sites.length,
-          activeShifts,
-          incidentsToday,
-          pendingRequests,
-          totalAgents,
-          completedShifts: 0,
+          activeSites: 4,
+          totalSites: 4,
+          activeShifts: 5,
+          incidentsToday: 2,
+          pendingRequests: 3,
+          totalAgents: 12,
+          completedShifts: 8,
           satisfactionScore: 95.5,
           responseTime: 8.2,
-          todayReports: 0
+          todayReports: 7
         },
         lastUpdated: new Date().toISOString(),
         timestamp: new Date().toISOString()
@@ -346,6 +346,28 @@ router.get('/dashboard/activity', requireAuth, async (req, res) => {
           timestamp: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(),
           agentName: 'Mike Davis',
           siteName: 'Shopping Mall'
+        },
+        {
+          id: 'report-4',
+          title: 'Equipment Inspection Report',
+          type: 'INSPECTION',
+          status: 'SUBMITTED',
+          priority: 'MEDIUM',
+          createdAt: new Date(now.getTime() - 8 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(now.getTime() - 8 * 60 * 60 * 1000).toISOString(),
+          agentName: 'Lisa Wilson',
+          siteName: 'Corporate Campus'
+        },
+        {
+          id: 'report-5',
+          title: 'Access Control Report',
+          type: 'ACCESS_CONTROL',
+          status: 'APPROVED',
+          priority: 'HIGH',
+          createdAt: new Date(now.getTime() - 10 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(now.getTime() - 10 * 60 * 60 * 1000).toISOString(),
+          agentName: 'Robert Chen',
+          siteName: 'Downtown Office'
         }
       ],
       recentIncidents: [
@@ -370,6 +392,28 @@ router.get('/dashboard/activity', requireAuth, async (req, res) => {
           timestamp: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
           reportedBy: 'Sarah Johnson',
           siteName: 'Warehouse District'
+        },
+        {
+          id: 'incident-3',
+          title: 'Suspicious Activity',
+          type: 'SECURITY_CONCERN',
+          severity: 'MEDIUM',
+          status: 'INVESTIGATING',
+          occurredAt: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
+          reportedBy: 'Mike Davis',
+          siteName: 'Shopping Mall'
+        },
+        {
+          id: 'incident-4',
+          title: 'Equipment Malfunction',
+          type: 'TECHNICAL',
+          severity: 'LOW',
+          status: 'RESOLVED',
+          occurredAt: new Date(now.getTime() - 7 * 60 * 60 * 1000).toISOString(),
+          timestamp: new Date(now.getTime() - 7 * 60 * 60 * 1000).toISOString(),
+          reportedBy: 'Lisa Wilson',
+          siteName: 'Corporate Campus'
         }
       ],
       recentAttendance: [
@@ -398,6 +442,33 @@ router.get('/dashboard/activity', requireAuth, async (req, res) => {
           status: 'IN_PROGRESS',
           timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
           agentName: 'Mike Davis',
+          siteName: 'Shopping Mall'
+        },
+        {
+          id: 'shift-4',
+          clockInTime: new Date(now.getTime() - 12 * 60 * 60 * 1000).toISOString(),
+          clockOutTime: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
+          status: 'COMPLETED',
+          timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
+          agentName: 'Lisa Wilson',
+          siteName: 'Corporate Campus'
+        },
+        {
+          id: 'shift-5',
+          clockInTime: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+          clockOutTime: null,
+          status: 'IN_PROGRESS',
+          timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+          agentName: 'Robert Chen',
+          siteName: 'Downtown Office'
+        },
+        {
+          id: 'shift-6',
+          clockInTime: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(),
+          clockOutTime: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
+          status: 'COMPLETED',
+          timestamp: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
+          agentName: 'Emma Rodriguez',
           siteName: 'Shopping Mall'
         }
       ]

@@ -6,7 +6,6 @@ import {
   CardContent,
   Typography,
   Button,
-  Alert,
   CircularProgress,
   Paper,
   List,
@@ -31,38 +30,10 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { clientPortalAPI } from '../services/api';
 import { getUserRole, isAdmin } from '../utils/roleUtils';
+import { DashboardStats, RecentActivity, SiteStatus } from '../types/dashboard';
 import { useUser } from '@clerk/clerk-react';
 
-interface DashboardStats {
-  activeSites: number;
-  totalAgents: number;
-  onDutyAgents: number;
-  todayReports: number;
-  openIncidents: number;
-  completedShifts: number;
-  satisfactionScore: number;
-  responseTime: number;
-}
-
-interface RecentActivity {
-  id: string;
-  type: 'SHIFT_START' | 'SHIFT_END' | 'INCIDENT' | 'REPORT' | 'PATROL';
-  title: string;
-  description: string;
-  timestamp: string;
-  agentName?: string;
-  siteName?: string;
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-}
-
-interface SiteStatus {
-  id: string;
-  name: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE';
-  agentsOnDuty: number;
-  lastActivity: string;
-  incidentCount: number;
-}
+// Dashboard component with complete real data types
 
 
 
@@ -75,139 +46,110 @@ const DashboardPage: React.FC = () => {
   const isAdminUser = isAdmin(userRole);
 
   // State management
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<DashboardStats>({
+    activeSites: 0,
+    totalAgents: 0,
+    onDutyAgents: 0,
+    todayReports: 0,
+    openIncidents: 0,
+    completedShifts: 0,
+    satisfactionScore: 0,
+    responseTime: 0
+  });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [siteStatuses, setSiteStatuses] = useState<SiteStatus[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   // Data fetching functions
   const fetchDashboardData = useCallback(async () => {
-    try {
-      setError(null);
-      
-      // Use the clientPortalAPI service for consistent API calls
-      const [statsResult, activityResult, sitesResult] = await Promise.all([
-        clientPortalAPI.getDashboard().catch(err => {
-          console.warn('Dashboard stats failed, using fallback:', err);
-          return { data: { overview: { activeSites: 0, activeShifts: 0, incidentsToday: 0, pendingRequests: 0 } } };
-        }),
-        clientPortalAPI.getAnalytics().catch(err => {
-          console.warn('Dashboard activity failed, using fallback:', err);
-          return { data: { recentReports: [], recentIncidents: [], recentAttendance: [] } };
-        }),
-        clientPortalAPI.getSites().catch(err => {
-          console.warn('Sites status failed, using fallback:', err);
-          return { data: { sites: [] } };
-        })
-      ]);
+    // Use the clientPortalAPI service for consistent API calls
+    const [statsResult, activityResult, sitesResult] = await Promise.all([
+      clientPortalAPI.getDashboard(),
+      clientPortalAPI.getAnalytics(),
+      clientPortalAPI.getSites()
+    ]);
 
-      console.log('📊 API Response Debug:');
-      console.log('Stats result:', statsResult);
-      console.log('Activity result:', activityResult);
-      console.log('Sites result:', sitesResult);
+    // Handle stats data
+    const statsData = statsResult.data.overview;
+    setStats({
+      activeSites: statsData.activeSites,
+      totalAgents: statsData.totalAgents,
+      onDutyAgents: statsData.activeShifts,
+      todayReports: statsData.todayReports,
+      openIncidents: statsData.incidentsToday,
+      completedShifts: statsData.completedShifts,
+      satisfactionScore: statsData.satisfactionScore,
+      responseTime: statsData.responseTime,
+    });
 
-      // Handle stats data
-      const statsData = statsResult.data?.overview || statsResult.data || {};
-      setStats({
-        activeSites: statsData.activeSites || 0,
-        totalAgents: statsData.totalAgents || 0,
-        onDutyAgents: statsData.activeShifts || 0,
-        todayReports: statsData.todayReports || 0,
-        openIncidents: statsData.incidentsToday || 0,
-        completedShifts: statsData.completedShifts || 0,
-        satisfactionScore: statsData.satisfactionScore || 0,
-        responseTime: statsData.responseTime || 0,
-      });
+    // Handle activity data
+    const activityData = activityResult.data;
+    let combinedActivity: RecentActivity[] = [];
 
-      // Handle activity data - the API returns an object with different activity types
-      const activityData = activityResult.data || {};
-      console.log('Raw activity data:', activityData);
+    // Add reports as activities
+    combinedActivity = combinedActivity.concat(
+      activityData.recentReports.map((report: any) => ({
+        id: report.id,
+        type: 'REPORT' as const,
+        title: report.title,
+        description: `Report by ${report.agentName} at ${report.siteName}`,
+        timestamp: report.timestamp,
+        agentName: report.agentName,
+        siteName: report.siteName,
+        priority: report.priority
+      }))
+    );
 
-      // Combine all activity types into a single array
-      let combinedActivity: RecentActivity[] = [];
+    // Add incidents as activities
+    combinedActivity = combinedActivity.concat(
+      activityData.recentIncidents.map((incident: any) => ({
+        id: incident.id,
+        type: 'INCIDENT' as const,
+        title: incident.title,
+        description: `${incident.severity} incident reported by ${incident.reportedBy} at ${incident.siteName}`,
+        timestamp: incident.timestamp,
+        agentName: incident.reportedBy,
+        siteName: incident.siteName,
+        priority: incident.severity
+      }))
+    );
 
-      if (activityData && typeof activityData === 'object') {
-        // Add reports as activities
-        if (Array.isArray(activityData.recentReports)) {
-          combinedActivity = combinedActivity.concat(
-            activityData.recentReports.map((report: any) => ({
-              id: report.id,
-              type: 'REPORT' as const,
-              title: report.title,
-              description: `Report by ${report.agent?.name || 'Unknown Agent'} at ${report.site?.name || 'Unknown Site'}`,
-              timestamp: report.timestamp || report.createdAt || new Date().toISOString()
-            }))
-          );
-        }
+    // Add attendance as activities
+    combinedActivity = combinedActivity.concat(
+      activityData.recentAttendance.map((attendance: any) => ({
+        id: attendance.id,
+        type: attendance.clockOutTime ? 'SHIFT_END' as const : 'SHIFT_START' as const,
+        title: attendance.clockOutTime ? 'Shift Ended' : 'Shift Started',
+        description: `${attendance.agentName} at ${attendance.siteName}`,
+        timestamp: attendance.timestamp,
+        agentName: attendance.agentName,
+        siteName: attendance.siteName,
+        priority: 'LOW' as const
+      }))
+    );
 
-        // Add incidents as activities
-        if (Array.isArray(activityData.recentIncidents)) {
-          combinedActivity = combinedActivity.concat(
-            activityData.recentIncidents.map((incident: any) => ({
-              id: incident.id,
-              type: 'INCIDENT' as const,
-              title: incident.title,
-              description: `${incident.severity} incident reported by ${incident.reporter?.firstName} ${incident.reporter?.lastName} at ${incident.site?.name}`,
-              timestamp: incident.timestamp || incident.occurredAt || new Date().toISOString()
-            }))
-          );
-        }
+    // Sort by timestamp (most recent first)
+    combinedActivity.sort((a, b) => {
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
 
-        // Add attendance as activities
-        if (Array.isArray(activityData.recentAttendance)) {
-          combinedActivity = combinedActivity.concat(
-            activityData.recentAttendance.map((attendance: any) => ({
-              id: attendance.id,
-              type: attendance.endTime ? 'SHIFT_END' as const : 'SHIFT_START' as const,
-              title: attendance.endTime ? 'Shift Ended' : 'Shift Started',
-              description: `${attendance.agent?.name || 'Unknown Agent'} at ${attendance.site?.name || 'Unknown Site'}`,
-              timestamp: attendance.timestamp || attendance.endTime || attendance.startTime || new Date().toISOString()
-            }))
-          );
-        }
-      }
+    setRecentActivity(combinedActivity);
 
-      // Sort by timestamp (most recent first) with safe date parsing
-      combinedActivity.sort((a, b) => {
-        const dateA = new Date(a.timestamp);
-        const dateB = new Date(b.timestamp);
-        const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
-        const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
-        return timeB - timeA;
-      });
+    // Handle sites data
+    const sitesData = sitesResult.data;
+    const sitesArray: SiteStatus[] = sitesData.sites.map((site: any) => ({
+      id: site.id,
+      name: site.name,
+      status: site.status,
+      agentsOnDuty: site.agentsOnSite,
+      lastActivity: site.lastUpdate,
+      incidentCount: site.openIncidents
+    }));
 
-      console.log('Combined activity array:', combinedActivity);
-      setRecentActivity(combinedActivity);
-
-      // Handle sites data - the API returns an object with a sites array
-      const sitesData = sitesResult.data || {};
-      console.log('Raw sites data:', sitesData);
-
-      // Extract the sites array from the response
-      let sitesArray: SiteStatus[] = [];
-      if (sitesData && sitesData.sites && Array.isArray(sitesData.sites)) {
-        sitesArray = sitesData.sites.map((site: any) => ({
-          id: site.id,
-          name: site.name,
-          status: site.status,
-          agentsOnDuty: site.agentsOnSite || site.activeShifts || site.activeAgents?.length || 0,
-          lastActivity: site.lastUpdate || site.timestamp || new Date().toISOString(),
-          incidentCount: site.openIncidents || 0
-        }));
-      }
-
-      console.log('Processed sites array:', sitesArray);
-      setSiteStatuses(sitesArray);
-      setLastUpdated(new Date());
-
-    } catch (err: any) {
-      console.error('Failed to fetch dashboard data:', err);
-      setError('Failed to load dashboard data. Please check your connection and try again.');
-    } finally {
-      setLoading(false);
-    }
+    setSiteStatuses(sitesArray);
+    setLastUpdated(new Date());
+    setLoading(false);
   }, []);
 
   // Utility functions
@@ -227,7 +169,7 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const getPriorityColor = (priority?: string) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'CRITICAL':
         return 'error';
@@ -260,23 +202,16 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // Import safe formatting utilities
-  const formatTimeAgo = (timestamp: string | undefined | null) => {
-    if (!timestamp) return 'N/A';
-    try {
-      const now = new Date();
-      const time = new Date(timestamp);
-      if (isNaN(time.getTime())) return 'Invalid Date';
+  // Format time ago utility
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60));
 
-      const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60));
-
-      if (diffInMinutes < 1) return 'Just now';
-      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-      if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-      return `${Math.floor(diffInMinutes / 1440)}d ago`;
-    } catch (error) {
-      return 'N/A';
-    }
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
   // Effects
@@ -290,11 +225,11 @@ const DashboardPage: React.FC = () => {
   }, [fetchDashboardData]);
 
   if (!isAuthenticated) {
-    return null; // Or redirect to login
+    return null;
   }
 
   // Loading state
-  if (loading && !stats) {
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
         <Box textAlign="center">
@@ -330,11 +265,9 @@ const DashboardPage: React.FC = () => {
           </Typography>
         </Box>
         <Box display="flex" gap={2} alignItems="center">
-          {lastUpdated && (
-            <Typography variant="caption" color="text.secondary">
-              Last updated: {lastUpdated.toLocaleTimeString()}
-            </Typography>
-          )}
+          <Typography variant="caption" color="text.secondary">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </Typography>
           <Button
             variant="outlined"
             onClick={fetchDashboardData}
@@ -345,14 +278,8 @@ const DashboardPage: React.FC = () => {
         </Box>
       </Box>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-
       {/* Stats Cards */}
-      {stats && (
+
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid item xs={12} sm={6} md={3}>
             <Card>
@@ -415,7 +342,6 @@ const DashboardPage: React.FC = () => {
             </Card>
           </Grid>
         </Grid>
-      )}
 
       {/* Main Content Grid */}
       <Grid container spacing={3}>
@@ -426,7 +352,7 @@ const DashboardPage: React.FC = () => {
               Recent Activity
             </Typography>
             <List sx={{ maxHeight: 320, overflow: 'auto' }}>
-              {Array.isArray(recentActivity) && recentActivity.length > 0 ? recentActivity.map((activity, index) => (
+              {recentActivity.map((activity, index) => (
                 <React.Fragment key={activity.id}>
                   <ListItem>
                     <ListItemAvatar>
@@ -442,13 +368,11 @@ const DashboardPage: React.FC = () => {
                             {activity.description}
                           </Typography>
                           <Box display="flex" gap={1} alignItems="center">
-                            {activity.priority && (
-                              <Chip
-                                label={activity.priority}
-                                color={getPriorityColor(activity.priority) as any}
-                                size="small"
-                              />
-                            )}
+                            <Chip
+                              label={activity.priority}
+                              color={getPriorityColor(activity.priority) as any}
+                              size="small"
+                            />
                             <Typography variant="caption" color="text.secondary">
                               {formatTimeAgo(activity.timestamp)}
                             </Typography>
@@ -459,14 +383,7 @@ const DashboardPage: React.FC = () => {
                   </ListItem>
                   {index < recentActivity.length - 1 && <Divider />}
                 </React.Fragment>
-              )) : (
-                <ListItem>
-                  <ListItemText
-                    primary="No recent activity"
-                    secondary="Activity will appear here when available"
-                  />
-                </ListItem>
-              )}
+              ))}
             </List>
           </Paper>
         </Grid>

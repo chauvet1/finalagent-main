@@ -136,26 +136,42 @@ async function seedDashboardData() {
     }
     console.log('✅ Created active shifts');
 
-    // Create recent reports
-    for (let i = 0; i < 10; i++) {
-      const reportDate = new Date(now.getTime() - (i * 2 * 60 * 60 * 1000)); // Every 2 hours back
-      
+    // Create recent reports with complete data
+    const reportTypes = ['INCIDENT', 'PATROL', 'MAINTENANCE', 'INSPECTION', 'ACCESS_CONTROL'];
+    const reportStatuses = ['DRAFT', 'SUBMITTED', 'REVIEWED', 'APPROVED'];
+    const reportPriorities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+    const reportTitles = [
+      'Security Patrol Report',
+      'Incident Response Report',
+      'Maintenance Check Report',
+      'Equipment Inspection Report',
+      'Access Control Report',
+      'Emergency Response Report',
+      'Visitor Management Report',
+      'Perimeter Security Report',
+      'CCTV System Check Report',
+      'Fire Safety Inspection Report'
+    ];
+
+    for (let i = 0; i < 15; i++) {
+      const reportDate = new Date(now.getTime() - (i * 1.5 * 60 * 60 * 1000)); // Every 1.5 hours back
+
       const existingReport = await prisma.report.findFirst({
         where: {
-          title: `Demo Report ${i + 1}`,
-          agentId: agentProfiles[i % agentProfiles.length].id
+          title: reportTitles[i % reportTitles.length],
+          authorId: agentProfiles[i % agentProfiles.length].id
         }
       });
 
       if (!existingReport) {
         await prisma.report.create({
           data: {
-            title: `Demo Report ${i + 1}`,
-            description: `This is a demo report #${i + 1} for testing dashboard functionality.`,
-            type: ['INCIDENT', 'PATROL', 'MAINTENANCE'][i % 3],
-            status: ['DRAFT', 'SUBMITTED', 'REVIEWED', 'APPROVED'][i % 4],
-            priority: ['LOW', 'MEDIUM', 'HIGH'][i % 3],
-            agentId: agentProfiles[i % agentProfiles.length].id,
+            title: reportTitles[i % reportTitles.length],
+            description: `Comprehensive ${reportTitles[i % reportTitles.length].toLowerCase()} with detailed findings and recommendations for site security improvements.`,
+            type: reportTypes[i % reportTypes.length],
+            status: reportStatuses[i % reportStatuses.length],
+            priority: reportPriorities[i % reportPriorities.length],
+            authorId: agentProfiles[i % agentProfiles.length].id,
             siteId: sites[i % sites.length].id,
             createdAt: reportDate,
             updatedAt: reportDate
@@ -163,15 +179,31 @@ async function seedDashboardData() {
         });
       }
     }
-    console.log('✅ Created demo reports');
+    console.log('✅ Created 15 demo reports with complete data');
 
-    // Create recent incidents
-    for (let i = 0; i < 5; i++) {
-      const incidentDate = new Date(now.getTime() - (i * 4 * 60 * 60 * 1000)); // Every 4 hours back
-      
+    // Create recent incidents with complete data
+    const incidentTypes = ['SECURITY_BREACH', 'EMERGENCY', 'SAFETY_VIOLATION', 'TECHNICAL', 'SECURITY_CONCERN'];
+    const incidentSeverities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+    const incidentStatuses = ['OPEN', 'IN_PROGRESS', 'INVESTIGATING', 'RESOLVED'];
+    const incidentTitles = [
+      'Unauthorized Access Attempt',
+      'Fire Alarm Activation',
+      'Suspicious Activity',
+      'Equipment Malfunction',
+      'Security System Alert',
+      'Emergency Evacuation',
+      'Perimeter Breach',
+      'Medical Emergency',
+      'Power System Failure',
+      'Communication System Down'
+    ];
+
+    for (let i = 0; i < 12; i++) {
+      const incidentDate = new Date(now.getTime() - (i * 3 * 60 * 60 * 1000)); // Every 3 hours back
+
       const existingIncident = await prisma.incident.findFirst({
         where: {
-          title: `Demo Incident ${i + 1}`,
+          title: incidentTitles[i % incidentTitles.length],
           siteId: sites[i % sites.length].id
         }
       });
@@ -179,22 +211,22 @@ async function seedDashboardData() {
       if (!existingIncident) {
         await prisma.incident.create({
           data: {
-            title: `Demo Incident ${i + 1}`,
-            description: `This is a demo incident #${i + 1} for testing dashboard functionality.`,
-            type: ['SECURITY_BREACH', 'EMERGENCY', 'SAFETY_VIOLATION'][i % 3],
-            severity: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'][i % 4],
-            status: ['OPEN', 'IN_PROGRESS', 'RESOLVED'][i % 3],
+            title: incidentTitles[i % incidentTitles.length],
+            description: `Detailed incident report: ${incidentTitles[i % incidentTitles.length].toLowerCase()} requiring immediate attention and proper documentation for security protocols.`,
+            type: incidentTypes[i % incidentTypes.length],
+            severity: incidentSeverities[i % incidentSeverities.length],
+            status: incidentStatuses[i % incidentStatuses.length],
             siteId: sites[i % sites.length].id,
-            reporterId: users[i % users.length].id,
+            reportedById: agentProfiles[i % agentProfiles.length].id,
             occurredAt: incidentDate,
-            location: `Location ${i + 1} at ${sites[i % sites.length].name}`,
+            location: `${['Main Entrance', 'Parking Garage', 'Loading Dock', 'Reception Area', 'Emergency Exit'][i % 5]} at ${sites[i % sites.length].name}`,
             createdAt: incidentDate,
             updatedAt: incidentDate
           }
         });
       }
     }
-    console.log('✅ Created demo incidents');
+    console.log('✅ Created 12 demo incidents with complete data');
 
     console.log('🎉 Dashboard seed data completed successfully!');
     console.log('📊 Summary:');
